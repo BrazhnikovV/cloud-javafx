@@ -1,0 +1,5 @@
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<VBox fx:controller="ru.brazhnikov.cloud.client.Controller" xmlns:fx="http://javafx.com/fxml" alignment="center">
+    <Button text="sdsdsd" />
+</VBox>
