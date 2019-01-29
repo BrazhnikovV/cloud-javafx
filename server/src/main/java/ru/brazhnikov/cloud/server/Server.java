@@ -1,4 +1,4 @@
-package com.flamexander.netty.example.server;
+package ru.brazhnikov.cloud.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -21,20 +21,23 @@ public class Server {
 
         try {
             ServerBootstrap b = new ServerBootstrap();
-            b.group(mainGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
-                        protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(
-                                    new ObjectDecoder(MAX_OBJ_SIZE, ClassResolvers.cacheDisabled(null)),
-                                    new ObjectEncoder(),
-                                    new MainHandler()
-                            );
-                        }
-                    })
-                    .option(ChannelOption.SO_BACKLOG, 128)
-                    .option(ChannelOption.TCP_NODELAY, true)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true);
+
+            b.group( mainGroup, workerGroup )
+                .channel( NioServerSocketChannel.class )
+                .childHandler(new ChannelInitializer<SocketChannel>() {
+                    protected void initChannel(SocketChannel socketChannel) throws Exception {
+
+                    socketChannel.pipeline().addLast(
+                        new ObjectDecoder(MAX_OBJ_SIZE, ClassResolvers.cacheDisabled(null)),
+                        new ObjectEncoder(),
+                        new MainHandler()
+                    );
+                    }
+                })
+                .option(ChannelOption.SO_BACKLOG, 128)
+                .option(ChannelOption.TCP_NODELAY, true)
+                .childOption(ChannelOption.SO_KEEPALIVE, true);
+
             ChannelFuture future = b.bind(8189).sync();
             future.channel().closeFuture().sync();
         } finally {

@@ -1,4 +1,4 @@
-package com.flamexander.netty.example.client;
+package ru.brazhnikov.cloud.client;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

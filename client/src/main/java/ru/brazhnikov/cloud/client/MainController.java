@@ -1,8 +1,8 @@
-package com.flamexander.netty.example.client;
+package ru.brazhnikov.cloud.client;
 
-import com.flamexander.netty.example.common.AbstractMessage;
-import com.flamexander.netty.example.common.FileMessage;
-import com.flamexander.netty.example.common.FileRequest;
+import ru.brazhnikov.cloud.common.AbstractMessage;
+import ru.brazhnikov.cloud.common.FileMessage;
+import ru.brazhnikov.cloud.common.FileRequest;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
