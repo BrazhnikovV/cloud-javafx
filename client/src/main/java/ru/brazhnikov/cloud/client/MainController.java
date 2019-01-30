@@ -29,15 +29,15 @@ import java.util.ResourceBundle;
 public class MainController implements Initializable {
 
     @FXML
-    public TextField tfFileName;
+    private TextField tfFileName;
 
     @FXML
-    public ListView<String> filesList;
+    private ListView<String> filesList;
 
     @Override
     public void initialize( URL location, ResourceBundle resources ) {
         Network.start();
-        Thread t = new Thread(() -> {
+        Thread thread = new Thread(() -> {
             try {
                 while ( true ) {
                     AbstractMessage am = Network.readObject();
@@ -49,7 +49,7 @@ public class MainController implements Initializable {
                             fm.getData(),
                             StandardOpenOption.CREATE
                         );
-                        refreshLocalFilesList();
+                        this.refreshLocalFilesList();
                     }
                 }
             }
@@ -61,10 +61,11 @@ public class MainController implements Initializable {
             }
         });
 
-        t.setDaemon( true );
-        t.start();
+        thread.setDaemon( true );
+        thread.start();
+
         this.filesList.setItems( FXCollections.observableArrayList() );
-        refreshLocalFilesList();
+        this.refreshLocalFilesList();
     }
 
     /**
@@ -82,7 +83,7 @@ public class MainController implements Initializable {
     /**
      * refreshLocalFilesList - обновить список локальных файлов
      */
-    public void refreshLocalFilesList() {
+    private void refreshLocalFilesList() {
 
         if ( Platform.isFxApplicationThread() ) {
             try {
