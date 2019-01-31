@@ -1,4 +1,4 @@
-package ru.brazhnikov.cloud.client;
+package ru.brazhnikov.cloud.common;
 
 /**
  * FileInfo - класс информация о файле
@@ -23,11 +23,17 @@ public class FileInfo {
     private long length;
 
     /**
+     *  @access private
+     *  @var long lastModified - дата последнего изменения файла
+     */
+    private long lastModified;
+
+    /**
      * getLength - получить длинну файла
      * @return long
      */
     public long getLength() {
-        return length;
+        return this.length;
     }
 
     /**
@@ -43,7 +49,7 @@ public class FileInfo {
      * @return String
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
     /**
@@ -55,12 +61,30 @@ public class FileInfo {
     }
 
     /**
+     * getLastModified - получить дату последнего изменения файла
+     * @return long
+     */
+    public long getLastModified() {
+        return this.lastModified;
+    }
+
+    /**
+     * setLastModified - установить дату последнего изменения файла
+     * @param lastModified
+     */
+    public void setLastModified( long lastModified ) {
+        this.lastModified = lastModified;
+    }
+
+    /**
      * FileInfo - конструктор
      * @param name - имя файла
      * @param length - длинна файла
+     * @param lastModified - дата последней модификации файла
      */
-    public FileInfo( String name, long length ) {
+    public FileInfo( String name, long length, long lastModified ) {
         this.name = name;
         this.length = length;
+        this.lastModified = lastModified;
     }
 }

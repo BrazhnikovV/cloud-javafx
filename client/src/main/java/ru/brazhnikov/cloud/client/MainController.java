@@ -5,6 +5,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import ru.brazhnikov.cloud.common.AbstractMessage;
+import ru.brazhnikov.cloud.common.FileInfo;
 import ru.brazhnikov.cloud.common.FileMessage;
 import ru.brazhnikov.cloud.common.FileRequest;
 import javafx.collections.FXCollections;
@@ -35,7 +36,10 @@ public class MainController implements Initializable {
     private TextField tfFileName;
 
     @FXML
-    TableView<FileInfo> personsTable;
+    TableView<FileInfo> clientFilesTable;
+
+    @FXML
+    TableView<FileInfo> serverFilesTable;
 
     /**
      *  @access private
@@ -47,7 +51,7 @@ public class MainController implements Initializable {
     public void initialize( URL location, ResourceBundle resources ) {
 
         try {
-            this.initializeFilesTable();
+            this.initClienFilesTable();
         }
         catch ( IOException e ) {
             e.printStackTrace();
@@ -83,10 +87,10 @@ public class MainController implements Initializable {
     }
 
     /**
-     * initializeFilesTable - инизализировать таблицу клиентских файлов
+     * initClienFilesTable - инизализировать таблицу клиентских файлов
      * @throws IOException
      */
-    public void initializeFilesTable () throws IOException {
+    public void initClienFilesTable () throws IOException {
 
         // Получаем файлы из клиентской папки
         File dir        = new File( this.clientStorageDir );
@@ -98,14 +102,18 @@ public class MainController implements Initializable {
         TableColumn<FileInfo, String> tcName = new TableColumn<>("Name" );
         tcName.setCellValueFactory(new PropertyValueFactory<>( "name" ) );
 
-        TableColumn<FileInfo, String> tcEmail = new TableColumn<>("Length" );
-        tcEmail.setCellValueFactory(new PropertyValueFactory<>( "length" ) );
+        TableColumn<FileInfo, String> tcLength = new TableColumn<>("Length" );
+        tcLength.setCellValueFactory(new PropertyValueFactory<>( "length" ) );
+
+        TableColumn<FileInfo, String> tcLastMod = new TableColumn<>("LastModified" );
+        tcLastMod.setCellValueFactory(new PropertyValueFactory<>( "lastModified" ) );
+
         for ( File file : lst ) {
-            personsList.addAll( new FileInfo( file.getName(), file.length() ) );
+            personsList.add( new FileInfo( file.getName(), file.length(), file.lastModified() ) );
         }
 
-        this.personsTable.getColumns().addAll( tcName, tcEmail );
-        this.personsTable.setItems( personsList );
+        this.clientFilesTable.getColumns().addAll( tcName, tcLength, tcLastMod );
+        this.clientFilesTable.setItems( personsList );
     }
 
     /**
