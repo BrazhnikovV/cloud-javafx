@@ -145,7 +145,7 @@ public class MainController implements Initializable {
      */
     private void updateFilesList() throws IOException {
         Files.list(
-            Paths.get("client_storage" ) )
+            Paths.get( this.clientStorageDir ) )
             .map( p -> p.getFileName().toString() )
             .forEach( o -> this.filesList.getItems().add( o ) );
     }
