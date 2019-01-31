@@ -2,3 +2,7 @@
 *.ipr
 *.iws
 *.iml
+
+# Maven
+log/
+target/
