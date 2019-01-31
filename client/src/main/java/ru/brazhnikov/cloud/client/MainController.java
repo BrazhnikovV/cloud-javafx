@@ -1,5 +1,9 @@
 package ru.brazhnikov.cloud.client;
 
+import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import ru.brazhnikov.cloud.common.AbstractMessage;
 import ru.brazhnikov.cloud.common.FileMessage;
 import ru.brazhnikov.cloud.common.FileRequest;
@@ -11,11 +15,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -32,7 +38,7 @@ public class MainController implements Initializable {
     private TextField tfFileName;
 
     @FXML
-    private ListView<String> filesList;
+    TableView<FileInfo> personsTable;
 
     /**
      *  @access private
@@ -42,6 +48,13 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize( URL location, ResourceBundle resources ) {
+
+        try {
+            initializePersonTable();
+        }
+        catch ( IOException e ) {
+            e.printStackTrace();
+        }
 
         Network.start();
         Thread thread = new Thread(() -> {
@@ -57,7 +70,6 @@ public class MainController implements Initializable {
                             fm.getData(),
                             StandardOpenOption.CREATE
                         );
-                        this.refreshLocalFilesList();
                     }
                 }
             }
@@ -72,8 +84,31 @@ public class MainController implements Initializable {
         thread.setDaemon( true );
         thread.start();
 
-        this.filesList.setItems( FXCollections.observableArrayList() );
-        this.refreshLocalFilesList();
+        //this.filesList.setItems( FXCollections.observableArrayList() );
+        //this.refreshLocalFilesList();
+    }
+
+    public void initializePersonTable() throws IOException {
+
+        // Получаем файлы из клиентской папки
+        File dir        = new File( this.clientStorageDir );
+        File[] arrFiles = dir.listFiles();
+        List<File> lst  = Arrays.asList( arrFiles );
+
+        ObservableList<FileInfo> personsList = FXCollections.observableArrayList();
+
+        TableColumn<FileInfo, String> tcName = new TableColumn<>("Name" );
+        tcName.setCellValueFactory(new PropertyValueFactory<>( "name" ) );
+
+        TableColumn<FileInfo, String> tcEmail = new TableColumn<>("Size" );
+        tcEmail.setCellValueFactory(new PropertyValueFactory<>( "size" ) );
+        for ( File file : lst ) {
+            personsList.addAll( new FileInfo( file.getName(), file.length() ) );
+        }
+
+        this.personsTable.getColumns().addAll( tcName, tcEmail );
+        this.personsTable.setItems( personsList );
+
     }
 
     /**
@@ -110,43 +145,5 @@ public class MainController implements Initializable {
         }
 
         this.tfFileName.clear();
-    }
-
-    /**
-     * refreshLocalFilesList - обновить список локальных файлов
-     */
-    private void refreshLocalFilesList() {
-
-        if ( Platform.isFxApplicationThread() ) {
-            try {
-                this.filesList.getItems().clear();
-                this.updateFilesList();
-            }
-            catch ( IOException e ) {
-                e.printStackTrace();
-            }
-        }
-        else {
-            Platform.runLater(() -> {
-                try {
-                    this.filesList.getItems().clear();
-                    this.updateFilesList();
-                }
-                catch ( IOException e ) {
-                    e.printStackTrace();
-                }
-            });
-        }
-    }
-
-    /**
-     * updateFilesList - обновить элемент список файлов
-     * @throws IOException
-     */
-    private void updateFilesList() throws IOException {
-        Files.list(
-            Paths.get( this.clientStorageDir ) )
-            .map( p -> p.getFileName().toString() )
-            .forEach( o -> this.filesList.getItems().add( o ) );
     }
 }
