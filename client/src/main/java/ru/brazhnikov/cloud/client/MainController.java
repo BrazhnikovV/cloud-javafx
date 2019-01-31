@@ -4,6 +4,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import ru.brazhnikov.cloud.common.AbstractMessage;
 import ru.brazhnikov.cloud.common.FileInfo;
 import ru.brazhnikov.cloud.common.FileMessage;
@@ -41,17 +43,26 @@ public class MainController implements Initializable {
     @FXML
     TableView<FileInfo> serverFilesTable;
 
+    private Stage savedStage;
+
     /**
      *  @access private
      *  @var String clientStorageDir - путь к папке с клиентскими файлами
      */
     private String clientStorageDir = "client_storage/";
 
+    /**
+     *  @access private
+     *  @var String serverStorageDir - путь к папке с серверными файлами
+     */
+    private String serverStorageDir = "server_storage/";
+
     @Override
     public void initialize( URL location, ResourceBundle resources ) {
 
         try {
             this.initClienFilesTable();
+            this.initServerFilesTable();
         }
         catch ( IOException e ) {
             e.printStackTrace();
@@ -84,36 +95,6 @@ public class MainController implements Initializable {
 
         thread.setDaemon( true );
         thread.start();
-    }
-
-    /**
-     * initClienFilesTable - инизализировать таблицу клиентских файлов
-     * @throws IOException
-     */
-    public void initClienFilesTable () throws IOException {
-
-        // Получаем файлы из клиентской папки
-        File dir        = new File( this.clientStorageDir );
-        File[] arrFiles = dir.listFiles();
-        List<File> lst  = Arrays.asList( arrFiles );
-
-        ObservableList<FileInfo> personsList = FXCollections.observableArrayList();
-
-        TableColumn<FileInfo, String> tcName = new TableColumn<>("Name" );
-        tcName.setCellValueFactory(new PropertyValueFactory<>( "name" ) );
-
-        TableColumn<FileInfo, String> tcLength = new TableColumn<>("Length" );
-        tcLength.setCellValueFactory(new PropertyValueFactory<>( "length" ) );
-
-        TableColumn<FileInfo, String> tcLastMod = new TableColumn<>("LastModified" );
-        tcLastMod.setCellValueFactory(new PropertyValueFactory<>( "lastModified" ) );
-
-        for ( File file : lst ) {
-            personsList.add( new FileInfo( file.getName(), file.length(), file.lastModified() ) );
-        }
-
-        this.clientFilesTable.getColumns().addAll( tcName, tcLength, tcLastMod );
-        this.clientFilesTable.setItems( personsList );
     }
 
     /**
@@ -150,5 +131,94 @@ public class MainController implements Initializable {
         }
 
         this.tfFileName.clear();
+    }
+
+    public void loadFiles () {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save file");
+
+        fileChooser.setInitialFileName("1.txt");
+        File savedFile = fileChooser.showSaveDialog(savedStage);
+    }
+
+    public void deleteFiles () {
+
+    }
+
+    /**
+     * initClienFilesTable - инизализировать таблицу клиентских файлов
+     * @throws IOException
+     */
+    private void initClienFilesTable () throws IOException {
+
+        List<File> lst = this.getFilesFromDirectory( this.clientStorageDir );
+
+        ObservableList<FileInfo> personsList = FXCollections.observableArrayList();
+
+        TableColumn<FileInfo, String> tcName = this.getTableColunm( "Name", "name" );
+        TableColumn<FileInfo, String> tcLength = this.getTableColunm( "Length", "length" );
+        TableColumn<FileInfo, String> tcLastMod = this.getTableColunm( "LastModified", "lastModified" );
+
+        for ( File file : lst ) {
+            personsList.add(
+                new FileInfo( file.getName(), file.length(), file.lastModified() )
+            );
+        }
+
+        this.clientFilesTable.getColumns().addAll( tcName, tcLength, tcLastMod );
+        this.clientFilesTable.setItems( personsList );
+    }
+
+    /**
+     * initServerFilesTable - инизализировать таблицу серверных файлов
+     * @throws IOException
+     */
+    private void initServerFilesTable () throws IOException {
+
+        List<File> lst = this.getFilesFromDirectory( this.serverStorageDir );
+
+        ObservableList<FileInfo> personsList = FXCollections.observableArrayList();
+
+        TableColumn<FileInfo, String> tcName = this.getTableColunm( "Name", "name" );
+        TableColumn<FileInfo, String> tcLength = this.getTableColunm( "Length", "length" );
+        TableColumn<FileInfo, String> tcLastMod = this.getTableColunm( "LastModified", "lastModified" );
+
+        for ( File file : lst ) {
+            personsList.add(
+                    new FileInfo( file.getName(), file.length(), file.lastModified() )
+            );
+        }
+
+        this.serverFilesTable.getColumns().addAll( tcName, tcLength, tcLastMod );
+        this.serverFilesTable.setItems( personsList );
+    }
+
+    /**
+     * TableColumn - Получить колонку для таблицы
+     * @param titelColumn - название колонки
+     * @param nameColumn  - тип информации
+     * @return TableColumn<FileInfo, String>
+     */
+    private TableColumn<FileInfo, String> getTableColunm ( String titelColumn, String nameColumn ) {
+
+        TableColumn<FileInfo, String> tcName = new TableColumn<>( titelColumn );
+        tcName.setCellValueFactory(new PropertyValueFactory<>( nameColumn ) );
+
+        return tcName;
+    }
+
+    /**
+     * getFilesFromDirectory - получить список файлов целевой директории
+     * @param directory - целевая директория
+     * @return List<File>
+     */
+    private List<File> getFilesFromDirectory ( String directory ) {
+
+        // Получаем файлы из клиентской папки
+        File dir        = new File( directory );
+        File[] arrFiles = dir.listFiles();
+        List<File> fileList  = Arrays.asList( arrFiles );
+
+        return fileList;
     }
 }
