@@ -22,14 +22,18 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
  */
 public class Server {
 
+    /**
+     *  @access private
+     *  @var final int - максимальный размер передаваемого файла !Fixme
+     */
     private static final int MAX_OBJ_SIZE = 100 * 1024 * 1024;
 
     /**
-     * run -
+     * run - запустить сервер
      * @throws Exception
      */
     public void run() throws Exception {
-        EventLoopGroup mainGroup = new NioEventLoopGroup();
+        EventLoopGroup mainGroup   = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
         try {

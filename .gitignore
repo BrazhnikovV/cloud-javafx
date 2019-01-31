@@ -8,3 +8,9 @@ log/
 server/target/
 client/target/
 common/target/
+
+# Project
+client_storage/
+server_storage/
+
+

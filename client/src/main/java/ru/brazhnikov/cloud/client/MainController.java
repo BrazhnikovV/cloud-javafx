@@ -40,9 +40,9 @@ public class MainController implements Initializable {
         Thread thread = new Thread(() -> {
             try {
                 while ( true ) {
+
                     AbstractMessage am = Network.readObject();
                     if ( am instanceof FileMessage ) {
-
                         FileMessage fm = ( FileMessage ) am;
                         Files.write(
                             Paths.get("client_storage/" + fm.getFilename() ),
@@ -75,9 +75,7 @@ public class MainController implements Initializable {
     public void pressOnDownloadBtn( ActionEvent actionEvent ) {
 
         if ( this.tfFileName.getLength() > 0 ) {
-
             Network.sendMsg( new FileRequest( this.tfFileName.getText() ) );
-
             this.tfFileName.clear();
         }
     }
@@ -90,10 +88,7 @@ public class MainController implements Initializable {
         if ( Platform.isFxApplicationThread() ) {
             try {
                 this.filesList.getItems().clear();
-                Files.list(
-                    Paths.get("client_storage"))
-                        .map( p -> p.getFileName().toString() )
-                        .forEach( o -> this.filesList.getItems().add( o ) );
+                this.updateFilesList();
             }
             catch ( IOException e ) {
                 e.printStackTrace();
@@ -103,10 +98,7 @@ public class MainController implements Initializable {
             Platform.runLater(() -> {
                 try {
                     this.filesList.getItems().clear();
-                    Files.list(
-                        Paths.get("client_storage" ) )
-                            .map( p -> p.getFileName().toString() )
-                            .forEach( o -> this.filesList.getItems().add( o ) );
+                    this.updateFilesList();
                 }
                 catch ( IOException e ) {
                     e.printStackTrace();
@@ -115,5 +107,14 @@ public class MainController implements Initializable {
         }
     }
 
-
+    /**
+     * updateFilesList - обновить элемент список файлов
+     * @throws IOException
+     */
+    private void updateFilesList() throws IOException {
+        Files.list(
+            Paths.get("client_storage" ) )
+            .map( p -> p.getFileName().toString() )
+            .forEach( o -> this.filesList.getItems().add( o ) );
+    }
 }
