@@ -1,27 +1,66 @@
 package ru.brazhnikov.cloud.client;
 
+/**
+ * FileInfo - класс информация о файле
+ *
+ * @version 1.0.1
+ * @package ru.brazhnikov.cloud.client
+ * @author  Vasya Brazhnikov
+ * @copyright Copyright (c) 2019, Vasya Brazhnikov
+ */
 public class FileInfo {
+
+    /**
+     *  @access private
+     *  @var String name - имя файла
+     */
     private String name;
-    private long size;
 
-    public long getSize() {
-        return size;
+    /**
+     *  @access private
+     *  @var long length - длинна файла
+     */
+    private long length;
+
+    /**
+     * getLength - получить длинну файла
+     * @return long
+     */
+    public long getLength() {
+        return length;
     }
 
-    public void setSize(long size) {
-        this.size = size;
+    /**
+     * setLength - установить длинну файла
+     * @param length - длинна файла
+     */
+    public void setLength( long length ) {
+        this.length = length;
     }
 
+    /**
+     * getName - получить имя файла
+     * @return String
+     */
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    /**
+     * setName - установить имя файла
+     * @param name - имя файла
+     */
+    public void setName( String name ) {
         this.name = name;
     }
 
-    public FileInfo(String name, long size) {
+    /**
+     * FileInfo - конструктор
+     * @param name - имя файла
+     * @param length - длинна файла
+     */
+    public FileInfo( String name, long length ) {
         this.name = name;
-        this.size = size;
+        this.length = length;
     }
 }

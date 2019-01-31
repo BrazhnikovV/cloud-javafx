@@ -47,7 +47,7 @@ public class MainController implements Initializable {
     public void initialize( URL location, ResourceBundle resources ) {
 
         try {
-            initializePersonTable();
+            this.initializeFilesTable();
         }
         catch ( IOException e ) {
             e.printStackTrace();
@@ -80,12 +80,13 @@ public class MainController implements Initializable {
 
         thread.setDaemon( true );
         thread.start();
-
-        //this.filesList.setItems( FXCollections.observableArrayList() );
-        //this.refreshLocalFilesList();
     }
 
-    public void initializePersonTable() throws IOException {
+    /**
+     * initializeFilesTable - инизализировать таблицу клиентских файлов
+     * @throws IOException
+     */
+    public void initializeFilesTable () throws IOException {
 
         // Получаем файлы из клиентской папки
         File dir        = new File( this.clientStorageDir );
@@ -97,15 +98,14 @@ public class MainController implements Initializable {
         TableColumn<FileInfo, String> tcName = new TableColumn<>("Name" );
         tcName.setCellValueFactory(new PropertyValueFactory<>( "name" ) );
 
-        TableColumn<FileInfo, String> tcEmail = new TableColumn<>("Size" );
-        tcEmail.setCellValueFactory(new PropertyValueFactory<>( "size" ) );
+        TableColumn<FileInfo, String> tcEmail = new TableColumn<>("Length" );
+        tcEmail.setCellValueFactory(new PropertyValueFactory<>( "length" ) );
         for ( File file : lst ) {
             personsList.addAll( new FileInfo( file.getName(), file.length() ) );
         }
 
         this.personsTable.getColumns().addAll( tcName, tcEmail );
         this.personsTable.setItems( personsList );
-
     }
 
     /**
