@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -34,18 +35,26 @@ public class MainController implements Initializable {
     @FXML
     private ListView<String> filesList;
 
+    /**
+     *  @access private
+     *  @var String clientStorageDir - путь к папке с клиентскими файлами
+     */
+    private String clientStorageDir = "client_storage/";
+
     @Override
     public void initialize( URL location, ResourceBundle resources ) {
+
         Network.start();
         Thread thread = new Thread(() -> {
             try {
                 while ( true ) {
-
+                    // клиент слушает файл месаджи
                     AbstractMessage am = Network.readObject();
+                    // если клиенту приходит файл меадж, то он сохраняет его к себе в хранилище
                     if ( am instanceof FileMessage ) {
                         FileMessage fm = ( FileMessage ) am;
                         Files.write(
-                            Paths.get("client_storage/" + fm.getFilename() ),
+                            Paths.get(this.clientStorageDir + fm.getFilename() ),
                             fm.getData(),
                             StandardOpenOption.CREATE
                         );
@@ -73,11 +82,35 @@ public class MainController implements Initializable {
      * @param actionEvent - событие
      */
     public void pressOnDownloadBtn( ActionEvent actionEvent ) {
+        System.out.println( "CLIENT MainController => pressOnDownloadBtn" );
 
         if ( this.tfFileName.getLength() > 0 ) {
             Network.sendMsg( new FileRequest( this.tfFileName.getText() ) );
             this.tfFileName.clear();
         }
+    }
+
+    /**
+     * pressOnUploadBtn - перехватить событие нажатия
+     * на кнопку для загрузки файла на сервер
+     * @param actionEvent - событие
+     */
+    public void pressOnUploadBtn( ActionEvent actionEvent ) throws IOException {
+        System.out.println( "CLIENT MainController => pressOnUploadBtn" );
+
+        String file = Paths.get( this.clientStorageDir ) + "/" + this.tfFileName.getText().trim();
+
+        if ( Files.exists( Paths.get( file ) ) ) {
+            try {
+                FileMessage fileMessage = new FileMessage( Paths.get( file ) );
+                Network.sendMsg( fileMessage );
+            }
+            catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        }
+
+        this.tfFileName.clear();
     }
 
     /**
