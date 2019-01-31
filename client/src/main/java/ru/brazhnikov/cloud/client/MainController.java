@@ -97,7 +97,7 @@ public class MainController implements Initializable {
     public void pressOnUploadBtn( ActionEvent actionEvent ) throws IOException {
         System.out.println( "CLIENT MainController => pressOnUploadBtn" );
 
-        String file = Paths.get( this.clientStorageDir ) + "/" + this.tfFileName.getText().trim();
+        String file = this.clientStorageDir + this.tfFileName.getText().trim();
 
         if ( Files.exists( Paths.get( file ) ) ) {
             try {
