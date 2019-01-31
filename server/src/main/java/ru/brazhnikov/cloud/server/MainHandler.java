@@ -9,22 +9,36 @@ import io.netty.util.ReferenceCountUtil;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * MainHandler -
+ *
+ * @version 1.0.1
+ * @package ru.brazhnikov.cloud.server
+ * @author  Vasya Brazhnikov
+ * @copyright Copyright (c) 2019, Vasya Brazhnikov
+ */
 public class MainHandler extends ChannelInboundHandlerAdapter {
+
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead( ChannelHandlerContext ctx, Object msg ) throws Exception {
         try {
-            if (msg == null) {
+
+            if ( msg == null ) {
                 return;
             }
-            if (msg instanceof FileRequest) {
-                FileRequest fr = (FileRequest) msg;
-                if (Files.exists(Paths.get("server_storage/" + fr.getFilename()))) {
-                    FileMessage fm = new FileMessage(Paths.get("server_storage/" + fr.getFilename()));
-                    ctx.writeAndFlush(fm);
+
+            if ( msg instanceof FileRequest ) {
+
+                FileRequest fr = ( FileRequest ) msg;
+                if ( Files.exists( Paths.get("server_storage/" + fr.getFilename() ) ) ) {
+
+                    FileMessage fm = new FileMessage( Paths.get("server_storage/" + fr.getFilename() ) );
+                    ctx.writeAndFlush( fm );
                 }
             }
-        } finally {
-            ReferenceCountUtil.release(msg);
+        }
+        finally {
+            ReferenceCountUtil.release( msg );
         }
     }
 

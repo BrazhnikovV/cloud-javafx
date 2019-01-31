@@ -41,7 +41,8 @@ public class Network {
     private static final int MAX_OBJ_SIZE = 100 * 1024 * 1024;
 
     /**
-     * start -
+     * start - подключается к серверу по сокету,
+     * открытает потоки на запись и на считывание
      */
     public static void start() {
         try {
@@ -55,7 +56,8 @@ public class Network {
     }
 
     /**
-     * stop -
+     * stop - останавливает сетевое взаимодействие,
+     * закрывает потоки на ссчитывание и на запись
      */
     public static void stop() {
 
@@ -105,6 +107,8 @@ public class Network {
      */
     public static AbstractMessage readObject() throws ClassNotFoundException, IOException {
         Object obj = in.readObject();
-        return (AbstractMessage) obj;
+        return ( AbstractMessage ) obj;
     }
+
+
 }

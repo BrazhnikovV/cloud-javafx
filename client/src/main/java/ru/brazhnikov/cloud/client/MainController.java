@@ -75,7 +75,9 @@ public class MainController implements Initializable {
     public void pressOnDownloadBtn( ActionEvent actionEvent ) {
 
         if ( this.tfFileName.getLength() > 0 ) {
+
             Network.sendMsg( new FileRequest( this.tfFileName.getText() ) );
+
             this.tfFileName.clear();
         }
     }
@@ -112,4 +114,6 @@ public class MainController implements Initializable {
             });
         }
     }
+
+
 }
