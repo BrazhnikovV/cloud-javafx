@@ -120,25 +120,34 @@ public class MainController implements Initializable {
 
         String file = this.clientStorageDir + this.tfFileName.getText().trim();
 
-        if ( Files.exists( Paths.get( file ) ) ) {
-            try {
-                FileMessage fileMessage = new FileMessage( Paths.get( file ) );
-                Network.sendMsg( fileMessage );
-            }
-            catch ( IOException e ) {
-                e.printStackTrace();
-            }
-        }
+        this.sendFile( file );
 
         this.tfFileName.clear();
     }
 
-    public void loadFiles () {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save file");
+    /**
+     * pressOnMultiUploadBtn - перехватывает событие
+     * нажатия на кнопку загрузки файлов на клиент
+     */
+    public void pressOnMultiUploadBtn () {
 
-        fileChooser.setInitialFileName("1.txt");
-        File savedFile = fileChooser.showSaveDialog(savedStage);
+        // готовим окно для выбора загружаемых файлов
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle( "Выберите один или несколько файлов." );
+        fileChooser.setInitialDirectory( new File( this.clientStorageDir ) );
+
+        List<File> selectedFiles = fileChooser.showOpenMultipleDialog( this.savedStage );
+
+        for ( File file : selectedFiles ) {
+            System.out.println( "Load file : " + file.getName() );
+            this.sendFile( this.clientStorageDir + file.getName() );
+        }
+
+        try {
+            this.updateServerFilesTable( selectedFiles );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteFiles () {
@@ -185,12 +194,44 @@ public class MainController implements Initializable {
 
         for ( File file : lst ) {
             personsList.add(
-                    new FileInfo( file.getName(), file.length(), file.lastModified() )
+                new FileInfo( file.getName(), file.length(), file.lastModified() )
             );
         }
 
         this.serverFilesTable.getColumns().addAll( tcName, tcLength, tcLastMod );
         this.serverFilesTable.setItems( personsList );
+    }
+
+    /**
+     * updateServerFilesTable - обновить таблицу серверных файлов
+     * @param selectedFiles - список загружаемых файлов
+     * @throws IOException
+     */
+    private void updateServerFilesTable ( List<File> selectedFiles ) throws IOException {
+
+        //ObservableList<FileInfo> personsList = FXCollections.observableArrayList();
+
+        for ( File file : selectedFiles ) {
+
+            boolean isMatch = false;
+            FileInfo fileInfo = new FileInfo( file.getName(), file.length(), file.lastModified() );
+
+            if ( this.serverFilesTable.getItems().isEmpty() ) {
+                this.serverFilesTable.getItems().add( fileInfo );
+                continue;
+            }
+
+            for ( FileInfo fi : this.serverFilesTable.getItems() ) {
+                if ( fi.getName().equals( fileInfo.getName() ) ) {
+                    isMatch = true;
+                    break;
+                }
+            }
+
+            if ( !isMatch ) {
+                this.serverFilesTable.getItems().add( fileInfo );
+            }
+        }
     }
 
     /**
@@ -220,5 +261,22 @@ public class MainController implements Initializable {
         List<File> fileList  = Arrays.asList( arrFiles );
 
         return fileList;
+    }
+
+    /**
+     * sendFile - отправить файл
+     * @param file - путь к файлу + имя
+     */
+    private void sendFile ( String file ) {
+
+        if ( Files.exists( Paths.get( file ) ) ) {
+            try {
+                FileMessage fileMessage = new FileMessage( Paths.get( file ) );
+                Network.sendMsg( fileMessage );
+            }
+            catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        }
     }
 }

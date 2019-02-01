@@ -21,7 +21,7 @@
             <TableView HBox.hgrow="ALWAYS" fx:id="clientFilesTable"/>
             <HBox alignment="CENTER_LEFT" style="-fx-padding: 3" HBox.hgrow="ALWAYS">
                 <HBox alignment="CENTER_LEFT" style="-fx-padding: 3">
-                    <Button text="Загрузить файлы" onAction="#loadFiles" />
+                    <Button text="Загрузить файлы" onAction="#pressOnMultiUploadBtn" />
                 </HBox>
                 <HBox alignment="CENTER_LEFT" style="-fx-padding: 3">
                     <Button text="Удалить файлы" onAction="#deleteFiles" />
