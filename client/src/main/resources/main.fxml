@@ -24,7 +24,7 @@
                     <Button text="Загрузить файлы" onAction="#pressOnMultiUploadBtn" />
                 </HBox>
                 <HBox alignment="CENTER_LEFT" style="-fx-padding: 3">
-                    <Button text="Удалить файлы" onAction="#deleteFiles" />
+                    <Button text="Очистить" onAction="#deleteAllFiles" />
                 </HBox>
             </HBox>
         </VBox>

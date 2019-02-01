@@ -1,16 +1,11 @@
 package ru.brazhnikov.cloud.client;
 
-import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import ru.brazhnikov.cloud.common.AbstractMessage;
-import ru.brazhnikov.cloud.common.FileInfo;
-import ru.brazhnikov.cloud.common.FileMessage;
-import ru.brazhnikov.cloud.common.FileRequest;
-import javafx.collections.FXCollections;
+import ru.brazhnikov.cloud.common.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -119,9 +114,7 @@ public class MainController implements Initializable {
         System.out.println( "CLIENT MainController => pressOnUploadBtn" );
 
         String file = this.clientStorageDir + this.tfFileName.getText().trim();
-
         this.sendFile( file );
-
         this.tfFileName.clear();
     }
 
@@ -130,6 +123,7 @@ public class MainController implements Initializable {
      * нажатия на кнопку загрузки файлов на клиент
      */
     public void pressOnMultiUploadBtn () {
+        System.out.println( "CLIENT MainController => pressOnMultiUploadBtn" );
 
         // готовим окно для выбора загружаемых файлов
         FileChooser fileChooser = new FileChooser();
@@ -150,32 +144,13 @@ public class MainController implements Initializable {
         }
     }
 
-    public void deleteFiles () {
-
-    }
-
     /**
      * initClienFilesTable - инизализировать таблицу клиентских файлов
      * @throws IOException
      */
     private void initClienFilesTable () throws IOException {
-
-        List<File> lst = this.getFilesFromDirectory( this.clientStorageDir );
-
-        ObservableList<FileInfo> personsList = FXCollections.observableArrayList();
-
-        TableColumn<FileInfo, String> tcName = this.getTableColunm( "Name", "name" );
-        TableColumn<FileInfo, String> tcLength = this.getTableColunm( "Length", "length" );
-        TableColumn<FileInfo, String> tcLastMod = this.getTableColunm( "LastModified", "lastModified" );
-
-        for ( File file : lst ) {
-            personsList.add(
-                new FileInfo( file.getName(), file.length(), file.lastModified() )
-            );
-        }
-
-        this.clientFilesTable.getColumns().addAll( tcName, tcLength, tcLastMod );
-        this.clientFilesTable.setItems( personsList );
+        FilesTable filesTable = new FilesTable( this.clientFilesTable );
+        filesTable.initTable( this.clientStorageDir );
     }
 
     /**
@@ -183,23 +158,8 @@ public class MainController implements Initializable {
      * @throws IOException
      */
     private void initServerFilesTable () throws IOException {
-
-        List<File> lst = this.getFilesFromDirectory( this.serverStorageDir );
-
-        ObservableList<FileInfo> personsList = FXCollections.observableArrayList();
-
-        TableColumn<FileInfo, String> tcName = this.getTableColunm( "Name", "name" );
-        TableColumn<FileInfo, String> tcLength = this.getTableColunm( "Length", "length" );
-        TableColumn<FileInfo, String> tcLastMod = this.getTableColunm( "LastModified", "lastModified" );
-
-        for ( File file : lst ) {
-            personsList.add(
-                new FileInfo( file.getName(), file.length(), file.lastModified() )
-            );
-        }
-
-        this.serverFilesTable.getColumns().addAll( tcName, tcLength, tcLastMod );
-        this.serverFilesTable.setItems( personsList );
+        FilesTable filesTable = new FilesTable( this.serverFilesTable );
+        filesTable.initTable( this.serverStorageDir );
     }
 
     /**
@@ -208,59 +168,8 @@ public class MainController implements Initializable {
      * @throws IOException
      */
     private void updateServerFilesTable ( List<File> selectedFiles ) throws IOException {
-
-        //ObservableList<FileInfo> personsList = FXCollections.observableArrayList();
-
-        for ( File file : selectedFiles ) {
-
-            boolean isMatch = false;
-            FileInfo fileInfo = new FileInfo( file.getName(), file.length(), file.lastModified() );
-
-            if ( this.serverFilesTable.getItems().isEmpty() ) {
-                this.serverFilesTable.getItems().add( fileInfo );
-                continue;
-            }
-
-            for ( FileInfo fi : this.serverFilesTable.getItems() ) {
-                if ( fi.getName().equals( fileInfo.getName() ) ) {
-                    isMatch = true;
-                    break;
-                }
-            }
-
-            if ( !isMatch ) {
-                this.serverFilesTable.getItems().add( fileInfo );
-            }
-        }
-    }
-
-    /**
-     * TableColumn - Получить колонку для таблицы
-     * @param titelColumn - название колонки
-     * @param nameColumn  - тип информации
-     * @return TableColumn<FileInfo, String>
-     */
-    private TableColumn<FileInfo, String> getTableColunm ( String titelColumn, String nameColumn ) {
-
-        TableColumn<FileInfo, String> tcName = new TableColumn<>( titelColumn );
-        tcName.setCellValueFactory(new PropertyValueFactory<>( nameColumn ) );
-
-        return tcName;
-    }
-
-    /**
-     * getFilesFromDirectory - получить список файлов целевой директории
-     * @param directory - целевая директория
-     * @return List<File>
-     */
-    private List<File> getFilesFromDirectory ( String directory ) {
-
-        // Получаем файлы из клиентской папки
-        File dir        = new File( directory );
-        File[] arrFiles = dir.listFiles();
-        List<File> fileList  = Arrays.asList( arrFiles );
-
-        return fileList;
+        FilesTable filesTable = new FilesTable( this.serverFilesTable );
+        filesTable.updateTable( selectedFiles );
     }
 
     /**
@@ -278,5 +187,13 @@ public class MainController implements Initializable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void deleteFile () {
+
+    }
+
+    public void deleteAllFiles () {
+
     }
 }
