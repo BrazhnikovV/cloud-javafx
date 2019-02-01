@@ -33,7 +33,7 @@
             <TableView HBox.hgrow="ALWAYS" fx:id="serverFilesTable"/>
             <HBox alignment="CENTER_RIGHT" style="-fx-padding: 3" HBox.hgrow="ALWAYS">
                 <HBox alignment="CENTER_RIGHT" style="-fx-padding: 3">
-                    <Button text="Удалить файлы" onAction="#deleteFiles" />
+                    <Button text="Удалить файлы" />
                 </HBox>
             </HBox>
         </VBox>

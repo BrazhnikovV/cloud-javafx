@@ -1,21 +1,17 @@
 package ru.brazhnikov.cloud.client;
 
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import ru.brazhnikov.cloud.common.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import ru.brazhnikov.cloud.common.FileSystem;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.*;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -33,12 +29,10 @@ public class MainController implements Initializable {
     private TextField tfFileName;
 
     @FXML
-    TableView<FileInfo> clientFilesTable;
+    private TableView<FileInfo> clientFilesTable;
 
     @FXML
-    TableView<FileInfo> serverFilesTable;
-
-    private Stage savedStage;
+    private TableView<FileInfo> serverFilesTable;
 
     /**
      *  @access private
@@ -51,6 +45,18 @@ public class MainController implements Initializable {
      *  @var String serverStorageDir - путь к папке с серверными файлами
      */
     private String serverStorageDir = "server_storage/";
+
+    /**
+     *  @access private
+     *  @var FilesTable delegatClientFilesTable -
+     */
+    private FilesTable delegatClientFilesTable;
+
+    /**
+     *  @access private
+     *  @var FilesTable delegatServerFilesTable -
+     */
+    private FilesTable delegatServerFilesTable;
 
     @Override
     public void initialize( URL location, ResourceBundle resources ) {
@@ -69,7 +75,7 @@ public class MainController implements Initializable {
                 while ( true ) {
                     // клиент слушает файл месаджи
                     AbstractMessage am = Network.readObject();
-                    // если клиенту приходит файл меадж, то он сохраняет его к себе в хранилище
+                    // если клиенту приходит файл меcадж, то он сохраняет его к себе в хранилище
                     if ( am instanceof FileMessage ) {
                         FileMessage fm = ( FileMessage ) am;
                         Files.write(
@@ -125,21 +131,30 @@ public class MainController implements Initializable {
     public void pressOnMultiUploadBtn () {
         System.out.println( "CLIENT MainController => pressOnMultiUploadBtn" );
 
-        // готовим окно для выбора загружаемых файлов
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle( "Выберите один или несколько файлов." );
-        fileChooser.setInitialDirectory( new File( this.clientStorageDir ) );
-
-        List<File> selectedFiles = fileChooser.showOpenMultipleDialog( this.savedStage );
-
+        List<File> selectedFiles = FileSystem.multiUploadFiles( this.clientStorageDir );
         for ( File file : selectedFiles ) {
-            System.out.println( "Load file : " + file.getName() );
             this.sendFile( this.clientStorageDir + file.getName() );
         }
 
         try {
             this.updateServerFilesTable( selectedFiles );
-        } catch (IOException e) {
+        }
+        catch ( IOException e ) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * deleteAllFiles - удалить все файлы из целевой директории
+     */
+    public void deleteAllFiles () {
+        System.out.println( "CLIENT MainController => deleteAllFiles" );
+
+        FileSystem.deleteAllFiles( this.clientStorageDir );
+        try {
+            this.updateClientFilesTable();
+        }
+        catch ( IOException e ) {
             e.printStackTrace();
         }
     }
@@ -149,8 +164,8 @@ public class MainController implements Initializable {
      * @throws IOException
      */
     private void initClienFilesTable () throws IOException {
-        FilesTable filesTable = new FilesTable( this.clientFilesTable );
-        filesTable.initTable( this.clientStorageDir );
+        this.delegatClientFilesTable = new FilesTable( this.clientFilesTable );
+        this.delegatClientFilesTable.initTable( this.clientStorageDir );
     }
 
     /**
@@ -158,8 +173,8 @@ public class MainController implements Initializable {
      * @throws IOException
      */
     private void initServerFilesTable () throws IOException {
-        FilesTable filesTable = new FilesTable( this.serverFilesTable );
-        filesTable.initTable( this.serverStorageDir );
+        this.delegatServerFilesTable = new FilesTable( this.serverFilesTable );
+        this.delegatServerFilesTable.initTable( this.serverStorageDir );
     }
 
     /**
@@ -168,8 +183,16 @@ public class MainController implements Initializable {
      * @throws IOException
      */
     private void updateServerFilesTable ( List<File> selectedFiles ) throws IOException {
-        FilesTable filesTable = new FilesTable( this.serverFilesTable );
-        filesTable.updateTable( selectedFiles );
+        this.delegatServerFilesTable.updateTable( selectedFiles );
+    }
+
+    /**
+     * updateClientFilesTable - обновить таблицу клиентских файлов
+     * @throws IOException
+     */
+    private void updateClientFilesTable () throws IOException {
+        System.out.println( "CLIENT MainController => updateClientFilesTable" );
+        this.delegatClientFilesTable.updateTable( this.clientStorageDir );
     }
 
     /**
@@ -187,13 +210,5 @@ public class MainController implements Initializable {
                 e.printStackTrace();
             }
         }
-    }
-
-    public void deleteFile () {
-
-    }
-
-    public void deleteAllFiles () {
-
     }
 }

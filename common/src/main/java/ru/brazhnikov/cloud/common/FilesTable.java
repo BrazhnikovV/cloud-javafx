@@ -8,7 +8,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,7 +41,7 @@ public class FilesTable {
      */
     public void initTable ( String storageDir ) throws IOException {
 
-        List<File> lst = this.getFilesFromDirectory( storageDir );
+        List<File> lst = FileSystem.getFilesFromDirectory( storageDir );
 
         ObservableList<FileInfo> personsList = FXCollections.observableArrayList();
 
@@ -91,6 +90,23 @@ public class FilesTable {
     }
 
     /**
+     * updateTable - обновить таблицу согласно существующих файлов
+     * @param storageDir - целевая директория
+     */
+    public void updateTable ( String storageDir ) {
+
+        // очищаем список файло в таблице
+        this.filesTable.getItems().removeAll( this.filesTable.getItems() );
+
+        List<File> lst = FileSystem.getFilesFromDirectory( storageDir );
+        for ( File file : lst ) {
+            this.filesTable.getItems().add(
+                new FileInfo( file.getName(), file.length(), file.lastModified() )
+            );
+        }
+    }
+
+    /**
      * TableColumn - Получить колонку для таблицы
      * @param titelColumn - название колонки
      * @param nameColumn  - тип информации
@@ -102,20 +118,5 @@ public class FilesTable {
         tcName.setCellValueFactory(new PropertyValueFactory<>( nameColumn ) );
 
         return tcName;
-    }
-
-    /**
-     * getFilesFromDirectory - получить список файлов целевой директории
-     * @param directory - целевая директория
-     * @return List<File>
-     */
-    private List<File> getFilesFromDirectory ( String directory ) {
-
-        // Получаем файлы из клиентской папки
-        File dir        = new File( directory );
-        File[] arrFiles = dir.listFiles();
-        List<File> fileList  = Arrays.asList( arrFiles );
-
-        return fileList;
     }
 }
