@@ -67,6 +67,32 @@ public class DbHandler {
     }
 
     /**
+     * getUserById - получить пользователя по id
+     * @param id - идентификатор пользователя
+     */
+    public User getUserById( int id ) {
+        User user = null;
+        try ( PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM users WHERE id = ?")) {
+            statement.setObject(1, id );
+            statement.execute();
+
+            ResultSet resultSet = statement.executeQuery();
+            while ( resultSet.next() ) {
+                user = new User(
+                    resultSet.getInt("id"), resultSet.getString("name"),
+                    resultSet.getString("pass"), resultSet.getInt("created")
+                );
+            }
+            return user;
+        }
+        catch ( SQLException e ) {
+            e.printStackTrace();
+            // Если произошла ошибка - возвращаем пустой объект
+            return user;
+        }
+    }
+
+    /**
      * getAllUsers - получить список всех пользователей
      * @return List<User>
      */
@@ -86,10 +112,8 @@ public class DbHandler {
             while ( resultSet.next() ) {
                 users.add(
                     new User(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("pass"),
-                        resultSet.getInt("created")
+                        resultSet.getInt("id"), resultSet.getString("name"),
+                        resultSet.getString("pass"), resultSet.getInt("created")
                     )
                 );
             }
@@ -115,7 +139,6 @@ public class DbHandler {
             statement.setObject(1, user.name );
             statement.setObject(2, user.pass );
             statement.setObject(3, user.created );
-            // Выполняем запрос
             statement.execute();
         }
         catch ( SQLException e ) {
@@ -132,25 +155,6 @@ public class DbHandler {
         try ( PreparedStatement statement = this.connection.prepareStatement("DELETE FROM Users WHERE id = ?" ) ) {
             statement.setObject(1, id );
             statement.execute();
-        }
-        catch ( SQLException e ) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            // Создаем экземпляр по работе с БД
-            DbHandler dbHandler = DbHandler.getInstance();
-            // Удаление записи с id = 8
-            dbHandler.deleteUser(4);
-            // Добавляем запись
-            //dbHandler.addUser( new User("vasek", "vasek", 121212121 ) );
-            // Получаем все записи и выводим их на консоль
-            List<User> users = dbHandler.getAllUsers();
-            for ( User user : users ) {
-                System.out.println( user.toString() );
-            }
         }
         catch ( SQLException e ) {
             e.printStackTrace();
