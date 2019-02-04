@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * MainClient -
+ * MainClient - класс запускающий интерфейс клиента
  *
  * @version 1.0.1
  * @package ru.brazhnikov.cloud.client

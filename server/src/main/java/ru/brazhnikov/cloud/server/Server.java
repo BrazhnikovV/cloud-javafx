@@ -13,7 +13,7 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 
 /**
- * Server -
+ * Server - класс запуска сервера
  *
  * @version 1.0.1
  * @package ru.brazhnikov.cloud.server
