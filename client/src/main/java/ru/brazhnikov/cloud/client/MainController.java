@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -19,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -35,12 +38,6 @@ public class MainController implements Initializable {
     @FXML
     private TextField tfFileName;
 
-    @FXML
-    private TableView<FileInfo> clientFilesTable;
-
-    @FXML
-    private TableView<FileInfo> serverFilesTable;
-
     /**
      *  @access private
      *  @var String clientStorageDir - путь к папке с клиентскими файлами
@@ -53,25 +50,15 @@ public class MainController implements Initializable {
      */
     private String serverStorageDir = "server_storage/";
 
-    /**
-     *  @access private
-     *  @var FilesTable delegatClientFilesTable -
-     */
-    private FilesTable delegatClientFilesTable;
-
-    /**
-     *  @access private
-     *  @var FilesTable delegatServerFilesTable -
-     */
-    private FilesTable delegatServerFilesTable;
+    @FXML
+    private TreeView<String> serverTreeView;
 
     @Override
     public void initialize( URL location, ResourceBundle resources ) {
 
         try {
             this.showAuthModal();
-            this.initClienFilesTable();
-            this.initServerFilesTable();
+            this.initTreeItemDir();
         }
         catch ( IOException e ) {
             e.printStackTrace();
@@ -148,13 +135,6 @@ public class MainController implements Initializable {
         for ( File file : selectedFiles ) {
             this.sendFile( this.clientStorageDir + file.getName() );
         }
-
-        try {
-            this.updateServerFilesTable( selectedFiles );
-        }
-        catch ( IOException e ) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -164,12 +144,6 @@ public class MainController implements Initializable {
         System.out.println( "CLIENT MainController => deleteAllFiles" );
 
         FileSystem.deleteAllFiles( this.clientStorageDir );
-        try {
-            this.updateClientFilesTable();
-        }
-        catch ( IOException e ) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -200,43 +174,6 @@ public class MainController implements Initializable {
     }
 
     /**
-     * initClienFilesTable - инизализировать таблицу клиентских файлов
-     * @throws IOException
-     */
-    private void initClienFilesTable () throws IOException {
-        this.delegatClientFilesTable = new FilesTable( this.clientFilesTable );
-        this.delegatClientFilesTable.initTable( this.clientStorageDir );
-    }
-
-    /**
-     * initServerFilesTable - инизализировать таблицу серверных файлов
-     * @throws IOException
-     */
-    private void initServerFilesTable () throws IOException {
-        this.delegatServerFilesTable = new FilesTable( this.serverFilesTable );
-        this.delegatServerFilesTable.initTable( this.serverStorageDir );
-    }
-
-    /**
-     * updateServerFilesTable - обновить таблицу серверных файлов
-     * @param selectedFiles - список загружаемых файлов
-     * @throws IOException
-     */
-    private void updateServerFilesTable ( List<File> selectedFiles ) throws IOException {
-        System.out.println( "CLIENT MainController => updateServerFilesTable" );
-        this.delegatServerFilesTable.updateTable( selectedFiles );
-    }
-
-    /**
-     * updateClientFilesTable - обновить таблицу клиентских файлов
-     * @throws IOException
-     */
-    private void updateClientFilesTable () throws IOException {
-        System.out.println( "CLIENT MainController => updateClientFilesTable" );
-        this.delegatClientFilesTable.updateTable( this.clientStorageDir );
-    }
-
-    /**
      * sendFile - отправить файл
      * @param file - путь к файлу + имя
      */
@@ -251,5 +188,21 @@ public class MainController implements Initializable {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * initTreeItemDir - инициализирует дерево файлов серверного хранилища
+     */
+    private void initTreeItemDir () {
+
+        TreeItem<String> root = new TreeItem<String>( this.serverStorageDir );
+        root.setExpanded( true );
+
+        List<File> lst = FileSystem.getFilesFromDirectory( this.serverStorageDir );
+        for ( File file : lst ) {
+            root.getChildren().add(new TreeItem<String>(file.getName()));
+        }
+
+        this.serverTreeView.setRoot( root );
     }
 }

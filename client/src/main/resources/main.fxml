@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
 
+<?import javafx.scene.control.TreeView?>
 <VBox alignment="CENTER" prefHeight="400.0" prefWidth="800.0"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.brazhnikov.cloud.client.MainController"
       style="-fx-background-color: linear-gradient(#fff 0%, #eee 10%, #ddd 90%, #bbb 100%);" fx:id="rootNode">
@@ -16,24 +17,15 @@
         <Button text="Загрузить" onAction="#pressOnUploadBtn" />
     </HBox>
     <HBox>
-        <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
-            <Label style="-fx-padding: 3">Локальное хранилище</Label>
-            <TableView HBox.hgrow="ALWAYS" fx:id="clientFilesTable"/>
-            <HBox alignment="CENTER_LEFT" style="-fx-padding: 3" HBox.hgrow="ALWAYS">
-                <HBox alignment="CENTER_LEFT" style="-fx-padding: 3">
+        <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 3">
+            <Label style="-fx-padding: 3">Серверное хранилище</Label>
+            <TreeView fx:id="serverTreeView" />
+            <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 3 3 3 0;">
                     <Button text="Загрузить файлы" onAction="#pressOnMultiUploadBtn" />
                 </HBox>
-                <HBox alignment="CENTER_LEFT" style="-fx-padding: 3">
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 3 3 3 0">
                     <Button text="Очистить" onAction="#deleteAllFiles" />
-                </HBox>
-            </HBox>
-        </VBox>
-        <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
-            <Label style="-fx-padding: 3">Серверное хранилище</Label>
-            <TableView HBox.hgrow="ALWAYS" fx:id="serverFilesTable"/>
-            <HBox alignment="CENTER_RIGHT" style="-fx-padding: 3" HBox.hgrow="ALWAYS">
-                <HBox alignment="CENTER_RIGHT" style="-fx-padding: 3">
-                    <Button text="Удалить файлы" />
                 </HBox>
             </HBox>
         </VBox>
