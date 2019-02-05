@@ -47,7 +47,7 @@ public class Server {
                     socketChannel.pipeline().addLast(
                         new ObjectDecoder( MAX_OBJ_SIZE, ClassResolvers.cacheDisabled(null ) ),
                         new ObjectEncoder(),
-                        new MainHandler()
+                        new AuthGatewayHandler()
                     );
                     }
                 })

@@ -1,11 +1,13 @@
 package ru.brazhnikov.cloud.client;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import ru.brazhnikov.cloud.common.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -63,12 +65,23 @@ public class MainController implements Initializable {
      */
     private FilesTable delegatServerFilesTable;
 
+    /**
+     *  @access private
+     *  @var boolean isGuest -
+     */
+    private boolean isGuest = true;
+
     @Override
     public void initialize( URL location, ResourceBundle resources ) {
 
         try {
-            this.initClienFilesTable();
-            this.initServerFilesTable();
+            if ( this.isGuest ) {
+                this.showAuthModal();
+            }
+            else {
+                this.initClienFilesTable();
+                this.initServerFilesTable();
+            }
         }
         catch ( IOException e ) {
             e.printStackTrace();
@@ -169,15 +182,23 @@ public class MainController implements Initializable {
      */
     public void showAuthModal() throws IOException {
 
-        Stage stage        = new Stage();
-        FXMLLoader loader  = new FXMLLoader(getClass().getResource("/login.fxml" ) );
-        Parent root        = loader.load();
+        Stage stage       = new Stage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml" ) );
+        Parent root       = loader.load();
 
         LoginController lc = ( LoginController ) loader.getController();
-        lc.backController = this;
+        lc.backController  = this;
 
-        stage.setTitle( "JavaFX Autorization" );
-        stage.setScene(new Scene(root, 400, 200 ) );
+        // изменяем стандартный обработчик закрытия окна ( крестик справа в верху )
+        stage.setOnCloseRequest( new EventHandler<WindowEvent>() {
+            @Override
+            public void handle( WindowEvent event ) {
+                System.exit(0 );
+            }
+        });
+
+        stage.setTitle( "Cloud Server :: Autorization" );
+        stage.setScene( new Scene(root, 400, 200 ) );
         stage.initModality( Modality.APPLICATION_MODAL );
         stage.showAndWait();
     }

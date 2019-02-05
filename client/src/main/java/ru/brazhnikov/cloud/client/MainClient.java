@@ -21,7 +21,7 @@ public class MainClient extends Application {
 
         FXMLLoader fxmlLoader = new FXMLLoader( getClass().getResource("/main.fxml" ) );
         Parent root = fxmlLoader.load();
-        primaryStage.setTitle( "Box Client" );
+        primaryStage.setTitle( "Cloud Server" );
         Scene scene = new Scene( root );
         primaryStage.setScene( scene );
         primaryStage.show();
