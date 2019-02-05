@@ -33,7 +33,7 @@ public class AuthGatewayHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        // если пользователь авторизован прокидываем сообщение дальше
+        // если пользователь авторизован прокидываем сообщение дальше в MainHandler
         if ( !this.authorized ) {
             if ( msg instanceof AuthMessage ) {
 
