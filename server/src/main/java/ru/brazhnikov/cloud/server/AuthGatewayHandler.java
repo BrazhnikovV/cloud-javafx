@@ -6,8 +6,20 @@ import io.netty.util.ReferenceCountUtil;
 import ru.brazhnikov.cloud.common.AuthMessage;
 import ru.brazhnikov.cloud.common.CommandMessage;
 
+/**
+ * AuthGatewayHandler - класс
+ *
+ * @version 1.0.1
+ * @package ru.brazhnikov.cloud.server
+ * @author  Vasya Brazhnikov
+ * @copyright Copyright (c) 2019, Vasya Brazhnikov
+ */
 public class AuthGatewayHandler extends ChannelInboundHandlerAdapter {
 
+    /**
+     *  @access private
+     *  @var boolean authorized -
+     */
     private static boolean authorized = false;
 
     @Override
@@ -24,19 +36,17 @@ public class AuthGatewayHandler extends ChannelInboundHandlerAdapter {
 
         if ( !this.authorized ) {
             if ( msg instanceof AuthMessage ) {
-                AuthMessage am = (AuthMessage) msg;
 
+                AuthMessage am      = (AuthMessage) msg;
                 DbHandler dbHandler = DbHandler.getInstance();
+                User user           = dbHandler.getUserByName( am.getLogin() );
 
-                if ( dbHandler.getUserByName( am.getLogin() ) != null ) {
-                    System.out.println( " dbHandler.getUserByName( am.getLogin() )" );
-                    this.authorized = true;
+                if ( user.pass.equals( am.getPassword() ) ) {
+
                     CommandMessage commandMessage = new CommandMessage();
                     ctx.writeAndFlush( commandMessage ).await();
                     ctx.pipeline().addLast( new MainHandler() );
-
-                    //System.out.println( "am.getLogin() : " + am.getLogin());
-                    //System.out.println( "am.getPassword() : " + am.getPassword());
+                    this.authorized = true;
                 }
             }
             else {
@@ -46,6 +56,11 @@ public class AuthGatewayHandler extends ChannelInboundHandlerAdapter {
         else {
             ctx.fireChannelRead( msg );
         }
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        this.authorized = false;
     }
 
     @Override

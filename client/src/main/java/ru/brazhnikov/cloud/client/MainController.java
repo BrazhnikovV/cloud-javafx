@@ -65,23 +65,13 @@ public class MainController implements Initializable {
      */
     private FilesTable delegatServerFilesTable;
 
-    /**
-     *  @access private
-     *  @var boolean isGuest -
-     */
-    private boolean isGuest = true;
-
     @Override
     public void initialize( URL location, ResourceBundle resources ) {
 
         try {
-            if ( this.isGuest ) {
-                this.showAuthModal();
-            }
-            else {
-                this.initClienFilesTable();
-                this.initServerFilesTable();
-            }
+            this.showAuthModal();
+            this.initClienFilesTable();
+            this.initServerFilesTable();
         }
         catch ( IOException e ) {
             e.printStackTrace();
@@ -185,6 +175,7 @@ public class MainController implements Initializable {
      * showAuthModal - показать окно авторизации
      */
     public void showAuthModal() throws IOException {
+        System.out.println( "CLIENT MainController => showAuthModal" );
 
         Stage stage       = new Stage();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml" ) );
@@ -231,6 +222,7 @@ public class MainController implements Initializable {
      * @throws IOException
      */
     private void updateServerFilesTable ( List<File> selectedFiles ) throws IOException {
+        System.out.println( "CLIENT MainController => updateServerFilesTable" );
         this.delegatServerFilesTable.updateTable( selectedFiles );
     }
 
