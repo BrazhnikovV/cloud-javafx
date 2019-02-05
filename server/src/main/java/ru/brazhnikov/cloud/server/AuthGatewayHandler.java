@@ -7,7 +7,7 @@ import ru.brazhnikov.cloud.common.AuthMessage;
 import ru.brazhnikov.cloud.common.CommandMessage;
 
 /**
- * AuthGatewayHandler - класс
+ * AuthGatewayHandler - класс обработчик сообщения на авторизацию от клиентов
  *
  * @version 1.0.1
  * @package ru.brazhnikov.cloud.server
@@ -18,22 +18,22 @@ public class AuthGatewayHandler extends ChannelInboundHandlerAdapter {
 
     /**
      *  @access private
-     *  @var boolean authorized -
+     *  @var boolean authorized - флаг авторизации клиента
      */
     private static boolean authorized = false;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println( "New unauthorizet client connected..." );
+        System.out.println( "### AuthGatewayHandler => channelActive..." );
     }
 
     @Override
     public void channelRead( ChannelHandlerContext ctx, Object msg ) throws Exception {
-        System.out.println( "### AuthGatewayHandler => channelRead" );
         if ( msg == null ) {
             return;
         }
 
+        // если пользователь авторизован прокидываем сообщение дальше
         if ( !this.authorized ) {
             if ( msg instanceof AuthMessage ) {
 
@@ -54,6 +54,7 @@ public class AuthGatewayHandler extends ChannelInboundHandlerAdapter {
             }
         }
         else {
+            ctx.pipeline().addLast( new MainHandler() );
             ctx.fireChannelRead( msg );
         }
     }

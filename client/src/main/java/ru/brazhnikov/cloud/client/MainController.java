@@ -81,6 +81,7 @@ public class MainController implements Initializable {
         Thread thread = new Thread(() -> {
             try {
                 while ( true ) {
+                    System.out.println( "### MainController => thread = new Thread(() ->" );
                     // клиент слушает файл месаджи
                     AbstractMessage am = Network.readObject();
                     // если клиенту приходит файл меcадж, то он сохраняет его к себе в хранилище
