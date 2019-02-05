@@ -1,6 +1,11 @@
 package ru.brazhnikov.cloud.client;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TableView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import ru.brazhnikov.cloud.common.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -157,6 +162,24 @@ public class MainController implements Initializable {
         catch ( IOException e ) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * showAuthModal - показать окно авторизации
+     */
+    public void showAuthModal() throws IOException {
+
+        Stage stage        = new Stage();
+        FXMLLoader loader  = new FXMLLoader(getClass().getResource("/login.fxml" ) );
+        Parent root        = loader.load();
+
+        LoginController lc = ( LoginController ) loader.getController();
+        lc.backController = this;
+
+        stage.setTitle( "JavaFX Autorization" );
+        stage.setScene(new Scene(root, 400, 200 ) );
+        stage.initModality( Modality.APPLICATION_MODAL );
+        stage.showAndWait();
     }
 
     /**
