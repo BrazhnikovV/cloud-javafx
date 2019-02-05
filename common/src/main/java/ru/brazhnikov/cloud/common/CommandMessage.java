@@ -14,6 +14,10 @@ public class CommandMessage extends AbstractMessage {
 
     private String type = "NONE AUTOHORIZED";
 
+    public CommandMessage() {
+
+    }
+
     public String getType() {
         return type;
     }

@@ -55,7 +55,7 @@ public class DbHandler {
      *  @access private
      *  @var Connection connection - Объект, в котором будет храниться соединение с БД
      */
-    private Connection connection;
+    private static Connection connection;
 
     /**
      * DbHandler - конструктор
@@ -81,6 +81,34 @@ public class DbHandler {
                 user = new User(
                     resultSet.getInt("id"), resultSet.getString("name"),
                     resultSet.getString("pass"), resultSet.getInt("created")
+                );
+            }
+            return user;
+        }
+        catch ( SQLException e ) {
+            e.printStackTrace();
+            // Если произошла ошибка - возвращаем пустой объект
+            return user;
+        }
+    }
+
+    /**
+     * getUserByName - получить пользователя по id
+     * @param name - имя пользователя
+     */
+    public static User getUserByName(String name) {
+        User user = null;
+        try ( PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE name = ?" ) ) {
+            statement.setObject(1, name );
+            statement.execute();
+
+            ResultSet resultSet = statement.executeQuery();
+            while ( resultSet.next() ) {
+                user = new User(
+                    resultSet.getInt("id"),
+                    resultSet.getString("name"),
+                    resultSet.getString("pass"),
+                    resultSet.getInt("created")
                 );
             }
             return user;

@@ -102,6 +102,10 @@ public class MainController implements Initializable {
                             StandardOpenOption.CREATE
                         );
                     }
+
+                    if ( am instanceof CommandMessage ) {
+                        System.out.println( "### MainController => instanceof CommandMessage" );
+                    }
                 }
             }
             catch ( ClassNotFoundException | IOException e ) {

@@ -35,10 +35,6 @@
                 <HBox alignment="CENTER_RIGHT" style="-fx-padding: 3">
                     <Button text="Удалить файлы" />
                 </HBox>
-
-                <HBox alignment="CENTER_RIGHT" style="-fx-padding: 3">
-                    <Button onAction="#showAuthModal" text="Show Modal"></Button>
-                </HBox>
             </HBox>
         </VBox>
     </HBox>
