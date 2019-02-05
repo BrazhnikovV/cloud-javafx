@@ -74,16 +74,7 @@ public class DbHandler {
         User user = null;
         try ( PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM users WHERE id = ?")) {
             statement.setObject(1, id );
-            statement.execute();
-
-            ResultSet resultSet = statement.executeQuery();
-            while ( resultSet.next() ) {
-                user = new User(
-                    resultSet.getInt("id"), resultSet.getString("name"),
-                    resultSet.getString("pass"), resultSet.getInt("created")
-                );
-            }
-            return user;
+            return createUserObj( statement );
         }
         catch ( SQLException e ) {
             e.printStackTrace();
@@ -100,24 +91,36 @@ public class DbHandler {
         User user = null;
         try ( PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE name = ?" ) ) {
             statement.setObject(1, name );
-            statement.execute();
-
-            ResultSet resultSet = statement.executeQuery();
-            while ( resultSet.next() ) {
-                user = new User(
-                    resultSet.getInt("id"),
-                    resultSet.getString("name"),
-                    resultSet.getString("pass"),
-                    resultSet.getInt("created")
-                );
-            }
-            return user;
+            return createUserObj( statement );
         }
         catch ( SQLException e ) {
             e.printStackTrace();
             // Если произошла ошибка - возвращаем пустой объект
             return user;
         }
+    }
+
+    /**
+     * createUserObj - вспомогательный метод для создания
+     * объекта подключившегося пользователя
+     * @param statement - подготовленный объект запроса к базе данных
+     * @return User
+     * @throws SQLException
+     */
+    private static User createUserObj( PreparedStatement statement ) throws SQLException {
+        User user = null;
+        statement.execute();
+
+        ResultSet resultSet = statement.executeQuery();
+        while ( resultSet.next() ) {
+            user = new User(
+                resultSet.getInt("id"),
+                resultSet.getString("name"),
+                resultSet.getString("pass"),
+                resultSet.getInt("created")
+            );
+        }
+        return user;
     }
 
     /**
