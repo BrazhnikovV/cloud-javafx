@@ -1,5 +1,7 @@
 package ru.brazhnikov.cloud.client;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -206,5 +208,16 @@ public class MainController implements Initializable {
         // убираем рамку у поля при фокусе
         this.serverTreeView.setStyle( "-fx-focus-traversable: false" );
         this.serverTreeView.setRoot( this.root );
+        this.serverTreeView.getSelectionModel().selectedItemProperty()
+            .addListener(new ChangeListener<TreeItem<String>>() {
+
+                @Override
+                public void changed(ObservableValue<? extends TreeItem<String>> observable, TreeItem<String> old_val, TreeItem<String> new_val) {
+                    TreeItem<String> selectedItem = new_val;
+                    System.out.println("Selected Text : " + selectedItem.getValue());
+                    // do what ever you want
+                }
+
+            });
     }
 }
