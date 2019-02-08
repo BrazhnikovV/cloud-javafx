@@ -39,7 +39,7 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                 FileRequest fr = ( FileRequest ) msg;
                 if ( Files.exists( Paths.get(this.serverStorageDir + fr.getFilename() ) ) ) {
 
-                    FileMessage fm = new FileMessage( Paths.get("server_storage/" + fr.getFilename() ) );
+                    FileMessage fm = new FileMessage( Paths.get(this.serverStorageDir + fr.getFilename() ) );
                     ctx.writeAndFlush( fm );
                 }
             }

@@ -1,5 +1,7 @@
 package ru.brazhnikov.cloud.client;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -49,6 +51,8 @@ public class MainController implements Initializable {
      *  @var String serverStorageDir - путь к папке с серверными файлами
      */
     private String serverStorageDir = "server_storage/";
+
+    TreeItem<String> root;
 
     @FXML
     private TreeView<String> serverTreeView;
@@ -134,6 +138,7 @@ public class MainController implements Initializable {
         List<File> selectedFiles = FileSystem.multiUploadFiles( this.clientStorageDir );
         for ( File file : selectedFiles ) {
             this.sendFile( this.clientStorageDir + file.getName() );
+            this.root.getChildren().add(new TreeItem<String>(file.getName()));
         }
     }
 
@@ -195,14 +200,27 @@ public class MainController implements Initializable {
      */
     private void initTreeItemDir () {
 
-        TreeItem<String> root = new TreeItem<String>( this.serverStorageDir );
-        root.setExpanded( true );
+        // получаем элементы для дерева файлов
+        this.root = TreeItemDir.getItems( this.serverStorageDir );
 
-        List<File> lst = FileSystem.getFilesFromDirectory( this.serverStorageDir );
+        // убираем рамку у поля при фокусе
+        this.serverTreeView.setStyle( "-fx-focus-traversable: false" );
+        this.serverTreeView.setRoot( this.root );
+    }
+
+    /**
+     * updateTreeItemDir -
+     */
+    private void updateTreeItemDir () {
+        System.out.println( "CLIENT MainController => updateTreeItemDir" );
+
+        // получаем элементы для дерева файлов
+
+        List<File> lst = FileSystem.getFilesFromDirectory( serverStorageDir );
         for ( File file : lst ) {
-            root.getChildren().add(new TreeItem<String>(file.getName()));
+            this.root.getChildren().add(new TreeItem<String>(file.getName()));
         }
 
-        this.serverTreeView.setRoot( root );
+        //this.serverTreeView.setRoot( this.root );
     }
 }
