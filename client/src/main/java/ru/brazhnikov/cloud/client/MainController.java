@@ -138,7 +138,7 @@ public class MainController implements Initializable {
         List<File> selectedFiles = FileSystem.multiUploadFiles( this.clientStorageDir );
         for ( File file : selectedFiles ) {
             this.sendFile( this.clientStorageDir + file.getName() );
-            this.root.getChildren().add(new TreeItem<String>(file.getName()));
+            this.root.getChildren().add( new TreeItem<String>( file.getName() ) );
         }
     }
 
@@ -206,21 +206,5 @@ public class MainController implements Initializable {
         // убираем рамку у поля при фокусе
         this.serverTreeView.setStyle( "-fx-focus-traversable: false" );
         this.serverTreeView.setRoot( this.root );
-    }
-
-    /**
-     * updateTreeItemDir -
-     */
-    private void updateTreeItemDir () {
-        System.out.println( "CLIENT MainController => updateTreeItemDir" );
-
-        // получаем элементы для дерева файлов
-
-        List<File> lst = FileSystem.getFilesFromDirectory( serverStorageDir );
-        for ( File file : lst ) {
-            this.root.getChildren().add(new TreeItem<String>(file.getName()));
-        }
-
-        //this.serverTreeView.setRoot( this.root );
     }
 }
