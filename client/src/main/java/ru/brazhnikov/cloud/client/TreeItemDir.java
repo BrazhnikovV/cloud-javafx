@@ -27,7 +27,6 @@ public class TreeItemDir {
      * @param dir - название директории
      */
     public static TreeItem<String> getItems ( String dir ) {
-        System.out.println( "### CLIENT TreeItemDir => getItems" );
 
         root.setExpanded( true );
 

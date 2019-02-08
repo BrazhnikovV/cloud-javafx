@@ -8,9 +8,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -18,7 +16,6 @@ import ru.brazhnikov.cloud.common.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TextField;
 import ru.brazhnikov.cloud.common.FileSystem;
 
 import java.io.File;
@@ -39,9 +36,6 @@ import java.util.ResourceBundle;
  */
 public class MainController implements Initializable {
 
-    @FXML
-    private TextField tfFileName;
-
     /**
      *  @access private
      *  @var String clientStorageDir - путь к папке с клиентскими файлами
@@ -52,12 +46,19 @@ public class MainController implements Initializable {
      *  @access private
      *  @var String serverStorageDir - путь к папке с серверными файлами
      */
-    private String serverStorageDir = "server_storage/";
+    private static String serverStorageDir = "server_storage/";
 
-    TreeItem<String> root;
+    /**
+     *  @access private
+     *  @var TreeItem<String> - корнеь дерева
+     */
+    private TreeItem<String> root;
 
     @FXML
     private TreeView<String> serverTreeView;
+
+    @FXML
+    private MenuBar menuBar;
 
     @Override
     public void initialize( URL location, ResourceBundle resources ) {
@@ -105,32 +106,6 @@ public class MainController implements Initializable {
     }
 
     /**
-     * pressOnDownloadBtn - перехватить событие нажатия на кнопку
-     * @param actionEvent - событие
-     */
-    public void pressOnDownloadBtn( ActionEvent actionEvent ) {
-        System.out.println( "CLIENT MainController => pressOnDownloadBtn" );
-
-        if ( this.tfFileName.getLength() > 0 ) {
-            Network.sendMsg( new FileRequest( this.tfFileName.getText() ) );
-            this.tfFileName.clear();
-        }
-    }
-
-    /**
-     * pressOnUploadBtn - перехватить событие нажатия
-     * на кнопку для загрузки файла на сервер
-     * @param actionEvent - событие
-     */
-    public void pressOnUploadBtn( ActionEvent actionEvent ) throws IOException {
-        System.out.println( "CLIENT MainController => pressOnUploadBtn" );
-
-        String file = this.clientStorageDir + this.tfFileName.getText().trim();
-        this.sendFile( file );
-        this.tfFileName.clear();
-    }
-
-    /**
      * pressOnMultiUploadBtn - перехватывает событие
      * нажатия на кнопку загрузки файлов на клиент
      */
@@ -142,6 +117,13 @@ public class MainController implements Initializable {
             this.sendFile( this.clientStorageDir + file.getName() );
             this.root.getChildren().add( new TreeItem<String>( file.getName() ) );
         }
+    }
+
+    /**
+     * exit -
+     */
+    public void pressMenuExit ( ActionEvent actionEvent )  {
+        System.exit(0 );
     }
 
     /**
@@ -209,15 +191,15 @@ public class MainController implements Initializable {
         this.serverTreeView.setStyle( "-fx-focus-traversable: false" );
         this.serverTreeView.setRoot( this.root );
         this.serverTreeView.getSelectionModel().selectedItemProperty()
-            .addListener(new ChangeListener<TreeItem<String>>() {
-
+            .addListener( new ChangeListener<TreeItem<String>>() {
                 @Override
                 public void changed(ObservableValue<? extends TreeItem<String>> observable, TreeItem<String> old_val, TreeItem<String> new_val) {
                     TreeItem<String> selectedItem = new_val;
-                    System.out.println("Selected Text : " + selectedItem.getValue());
+                    System.out.println("Selected Text : " + selectedItem.getValue() );
+                    //setServerStorageDir ( selectedItem.getValue() );
                     // do what ever you want
                 }
-
             });
     }
+
 }
