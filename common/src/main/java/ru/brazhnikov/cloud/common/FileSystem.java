@@ -29,7 +29,6 @@ public class FileSystem {
      */
     public static List<File> getFilesFromDirectory ( String directory ) {
 
-        // Получаем файлы из клиентской папки
         File dir        = new File( directory );
         File[] arrFiles = dir.listFiles();
         List<File> fileList  = Arrays.asList( arrFiles );

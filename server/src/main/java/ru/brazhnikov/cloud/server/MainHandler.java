@@ -49,8 +49,6 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
             else if ( msg instanceof FileMessage ) {
                 System.out.println( "### SERVER MainHandler => msg instanceof FileMessage" );
                 FileMessage fileMessage = ( FileMessage ) msg;
-                System.out.println( "fileMessage.getPathToSave() : " + fileMessage.getPathToSave() );
-                System.out.println( "fileMessage.getFilename() : " + fileMessage.getFilename() );
                 Files.write(
                     Paths.get(fileMessage.getPathToSave() + fileMessage.getFilename()),
                     fileMessage.getData(),

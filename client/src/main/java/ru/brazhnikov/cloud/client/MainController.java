@@ -202,10 +202,8 @@ public class MainController implements Initializable {
      * initTreeItemDir - инициализирует дерево файлов серверного хранилища
      */
     private void initTreeItemDir () {
-
         // получаем элементы для дерева файлов
         this.root = TreeItemDir.getItems( this.serverStorageDir );
-
         // убираем рамку у поля при фокусе
         this.serverTreeView.setStyle( "-fx-focus-traversable: false" );
         // устанавливаем рутовую директорию хранилища
@@ -220,7 +218,6 @@ public class MainController implements Initializable {
                     // после каждого клика пользователя и формируем заново
                     selectedPath.clear();
                     selectedPath = getParents( selectedItem );
-                    System.out.println( "dir : " + createPath( selectedPath ));
                 }
             });
     }
