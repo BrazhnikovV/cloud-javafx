@@ -40,14 +40,21 @@ public class FileSystem {
     /**
      * multiUploadFiles - мультизагрузка файлов
      */
-    public static List<File> multiUploadFiles ( String storageDir ) {
+    public static List<File> multiUploadFiles () {
 
         // готовим окно для выбора загружаемых файлов
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle( "Выберите один или несколько файлов." );
-        fileChooser.setInitialDirectory( new File( storageDir ) );
+        fileChooser.setInitialDirectory( new File( System.getProperty( "user.home" ) ) );
 
-        return fileChooser.showOpenMultipleDialog( savedStage );
+        if ( fileChooser == null ) {
+            return null;
+        }
+        else {
+            return fileChooser.showOpenMultipleDialog( savedStage );
+        }
+
+
     }
 
     /**

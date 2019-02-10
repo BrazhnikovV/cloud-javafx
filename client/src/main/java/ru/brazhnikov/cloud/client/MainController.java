@@ -38,12 +38,6 @@ public class MainController implements Initializable {
 
     /**
      *  @access private
-     *  @var String clientStorageDir - путь к папке с клиентскими файлами
-     */
-    private String clientStorageDir = "client_storage/";
-
-    /**
-     *  @access private
      *  @var String serverStorageDir - путь к папке с серверными файлами
      */
     private static String serverStorageDir = "server_storage/";
@@ -75,18 +69,8 @@ public class MainController implements Initializable {
         Thread thread = new Thread(() -> {
             try {
                 while ( true ) {
-                    System.out.println( "### MainController => thread = new Thread(() ->" );
                     // клиент слушает файл месаджи
                     AbstractMessage am = Network.readObject();
-                    // если клиенту приходит файл меcадж, то он сохраняет его к себе в хранилище
-                    if ( am instanceof FileMessage ) {
-                        FileMessage fm = ( FileMessage ) am;
-                        Files.write(
-                            Paths.get(this.clientStorageDir + fm.getFilename() ),
-                            fm.getData(),
-                            StandardOpenOption.CREATE
-                        );
-                    }
 
                     if ( am instanceof CommandMessage ) {
                         System.out.println( "### MainController => instanceof CommandMessage" );
@@ -112,15 +96,21 @@ public class MainController implements Initializable {
     public void pressOnMultiUploadBtn () {
         System.out.println( "CLIENT MainController => pressOnMultiUploadBtn" );
 
-        List<File> selectedFiles = FileSystem.multiUploadFiles( this.clientStorageDir );
+        List<File> selectedFiles = FileSystem.multiUploadFiles();
+
+        if ( selectedFiles == null ) {
+            return;
+        }
+
         for ( File file : selectedFiles ) {
-            this.sendFile( this.clientStorageDir + file.getName() );
+            this.sendFile( file.getName() );
             this.root.getChildren().add( new TreeItem<String>( file.getName() ) );
         }
     }
 
     /**
-     * exit -
+     * exit - перехватить клик по пункту меню выход
+     * @param actionEvent
      */
     public void pressMenuExit ( ActionEvent actionEvent )  {
         System.exit(0 );
@@ -132,7 +122,8 @@ public class MainController implements Initializable {
     public void deleteAllFiles () {
         System.out.println( "CLIENT MainController => deleteAllFiles" );
 
-        FileSystem.deleteAllFiles( this.clientStorageDir );
+        // !Fixme - отправить командМесадж на сервер для очиски хранилища
+        //FileSystem.deleteAllFiles( this.clientStorageDir );
     }
 
     /**
@@ -193,13 +184,22 @@ public class MainController implements Initializable {
         this.serverTreeView.getSelectionModel().selectedItemProperty()
             .addListener( new ChangeListener<TreeItem<String>>() {
                 @Override
-                public void changed(ObservableValue<? extends TreeItem<String>> observable, TreeItem<String> old_val, TreeItem<String> new_val) {
-                    TreeItem<String> selectedItem = new_val;
+                public void changed(ObservableValue<? extends TreeItem<String>> observable, TreeItem<String> oldVal, TreeItem<String> newVal) {
+                    TreeItem<String> selectedItem = newVal;
                     System.out.println("Selected Text : " + selectedItem.getValue() );
-                    //setServerStorageDir ( selectedItem.getValue() );
-                    // do what ever you want
+
+                    TreeItem<String>  treeItem = selectedItem.getParent();
+
+                    while ( treeItem != null ) {
+                        treeItem = treeItem.getParent();
+                    }
                 }
             });
     }
 
+    private ArrayList<String> getParents ( TreeItem<String> selectedItem ) {
+        ArrayList<String> arr = new ArrayList<>();
+
+        return arr;
+    }
 }
