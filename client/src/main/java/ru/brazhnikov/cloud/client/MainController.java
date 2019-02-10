@@ -52,7 +52,13 @@ public class MainController implements Initializable {
 
     /**
      *  @access private
-     *  @var TreeItem<String> - корнеь дерева
+     *  @var TreeItem<String> selectedItem -
+     */
+    private TreeItem<String> selectedItem;
+
+    /**
+     *  @access private
+     *  @var TreeItem<String> root - корнеь дерева
      */
     private TreeItem<String> root;
 
@@ -109,8 +115,18 @@ public class MainController implements Initializable {
 
         for ( File file : selectedFiles ) {
             this.sendFile( file.getAbsolutePath(), createPath( selectedPath ) );
-            // !Fixme - при сохранении обновляет дерево как будто файл добавили в корень
-            this.root.getChildren().add( new TreeItem<String>( file.getName() ) );
+
+            for ( TreeItem<String > treeItem: this.root.getChildren() ) {
+
+                if ( selectedItem.getValue().equals( treeItem.getValue() ) ) {
+                    treeItem.getChildren().add( new TreeItem<String>( file.getName() ) );
+                }
+                else {
+                    if ( treeItem.getChildren().contains( selectedItem ) ) {
+                        treeItem.getChildren().add( new TreeItem<String>( file.getName() ) );
+                    }
+                }
+            }
         }
     }
 
@@ -199,11 +215,12 @@ public class MainController implements Initializable {
             .addListener( new ChangeListener<TreeItem<String>>() {
                 @Override
                 public void changed( ObservableValue<? extends TreeItem<String>> observable, TreeItem<String> oldVal, TreeItem<String> newVal ) {
-                    TreeItem<String> selectedItem = newVal;
+                    selectedItem = newVal;
                     // очищаем текущий массив строк названий директорий
                     // после каждого клика пользователя и формируем заново
                     selectedPath.clear();
                     selectedPath = getParents( selectedItem );
+                    System.out.println( "dir : " + createPath( selectedPath ));
                 }
             });
     }
