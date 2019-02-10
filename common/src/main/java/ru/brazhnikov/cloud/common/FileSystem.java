@@ -53,8 +53,6 @@ public class FileSystem {
         else {
             return fileChooser.showOpenMultipleDialog( savedStage );
         }
-
-
     }
 
     /**

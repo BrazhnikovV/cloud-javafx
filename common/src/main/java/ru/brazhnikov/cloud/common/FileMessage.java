@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * FileMessage -
+ * FileMessage - класс сущность представления файла
  *
  * @version 1.0.1
  * @package ru.brazhnikov.cloud.common
@@ -22,9 +22,15 @@ public class FileMessage extends AbstractMessage {
 
     /**
      *  @access private
-     *  @var byte[] data -
+     *  @var byte[] data - байтовый массив данных файла
      */
     private byte[] data;
+
+    /**
+     *  @access private
+     *  @var String pathToSave - путь к месту сохранения в файловом хранилище
+     */
+    private String pathToSave;
 
     /**
      * getFilename - получить имя файла
@@ -35,7 +41,7 @@ public class FileMessage extends AbstractMessage {
     }
 
     /**
-     * getData - получить
+     * getData - получить массив байт данных файла
      * @return byte[]
      */
     public byte[] getData() {
@@ -43,13 +49,20 @@ public class FileMessage extends AbstractMessage {
     }
 
     /**
+     * getPathToSave - получить путь к месту сохранения файла в файловом хранилище
+     * @return String
+     */
+    public String getPathToSave() { return this.pathToSave; }
+
+    /**
      * FileMessage - конструктор
      * @param path - объект содержащий данные о файле
      * @throws IOException
      */
-    public FileMessage( Path path ) throws IOException {
+    public FileMessage( Path path, String pathToSave ) throws IOException {
 
-        this.filename = path.getFileName().toString();
-        this.data     = Files.readAllBytes( path );
+        this.filename   = path.getFileName().toString();
+        this.data       = Files.readAllBytes( path );
+        this.pathToSave = pathToSave;
     }
 }

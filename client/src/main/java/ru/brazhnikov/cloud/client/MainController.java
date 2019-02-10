@@ -105,13 +105,11 @@ public class MainController implements Initializable {
         System.out.println( "CLIENT MainController => pressOnMultiUploadBtn" );
 
         List<File> selectedFiles = FileSystem.multiUploadFiles();
-
-        if ( selectedFiles == null ) {
-            return;
-        }
+        if ( selectedFiles == null ) { return; }
 
         for ( File file : selectedFiles ) {
-            this.sendFile( file.getName() );
+            this.sendFile( file.getAbsolutePath(), createPath( selectedPath ) );
+            // !Fixme - при сохранении обновляет дерево как будто файл добавили в корень
             this.root.getChildren().add( new TreeItem<String>( file.getName() ) );
         }
     }
@@ -162,14 +160,20 @@ public class MainController implements Initializable {
     }
 
     /**
-     * sendFile - отправить файл
+     * sendFile - отправить файл для сохранения на сервере
      * @param file - путь к файлу + имя
+     * @param pathToSave - путь к папке на серверном хранилище
      */
-    private void sendFile ( String file ) {
+    private void sendFile ( String file, String pathToSave ) {
+        System.out.println( "CLIENT MainController => sendFile" );
+
+        if ( pathToSave.isEmpty() ) {
+            pathToSave = serverStorageDir;
+        }
 
         if ( Files.exists( Paths.get( file ) ) ) {
             try {
-                FileMessage fileMessage = new FileMessage( Paths.get( file ) );
+                FileMessage fileMessage = new FileMessage( Paths.get( file ), pathToSave );
                 Network.sendMsg( fileMessage );
             }
             catch ( IOException e ) {

@@ -34,20 +34,25 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                 return;
             }
 
+
             if ( msg instanceof FileRequest ) {
+                /*
                 System.out.println( "### SERVER MainHandler => msg instanceof FileRequest" );
                 FileRequest fr = ( FileRequest ) msg;
-                if ( Files.exists( Paths.get(this.serverStorageDir + fr.getFilename() ) ) ) {
 
+                if ( Files.exists( Paths.get(this.serverStorageDir + fr.getFilename() ) ) ) {
                     FileMessage fm = new FileMessage( Paths.get(this.serverStorageDir + fr.getFilename() ) );
                     ctx.writeAndFlush( fm );
                 }
+                */
             }
             else if ( msg instanceof FileMessage ) {
                 System.out.println( "### SERVER MainHandler => msg instanceof FileMessage" );
                 FileMessage fileMessage = ( FileMessage ) msg;
+                System.out.println( "fileMessage.getPathToSave() : " + fileMessage.getPathToSave() );
+                System.out.println( "fileMessage.getFilename() : " + fileMessage.getFilename() );
                 Files.write(
-                    Paths.get(this.serverStorageDir + fileMessage.getFilename()),
+                    Paths.get(fileMessage.getPathToSave() + fileMessage.getFilename()),
                     fileMessage.getData(),
                     StandardOpenOption.CREATE
                 );
