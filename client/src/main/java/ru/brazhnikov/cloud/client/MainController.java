@@ -44,6 +44,13 @@ public class MainController implements Initializable {
 
     /**
      *  @access private
+     *  @var ArrayList<String> selectedPath - путь к директории согласно выбора
+     *  пользователя в дереве папок и файлов
+     */
+    private static ArrayList<String> selectedPath = new ArrayList<>();
+
+    /**
+     *  @access private
      *  @var TreeItem<String> - корнеь дерева
      */
     private TreeItem<String> root;
@@ -109,7 +116,7 @@ public class MainController implements Initializable {
     }
 
     /**
-     * exit - перехватить клик по пункту меню выход
+     * exit - перехватить клик по пункту меню выход из приложения
      * @param actionEvent
      */
     public void pressMenuExit ( ActionEvent actionEvent )  {
@@ -184,22 +191,29 @@ public class MainController implements Initializable {
         this.serverTreeView.getSelectionModel().selectedItemProperty()
             .addListener( new ChangeListener<TreeItem<String>>() {
                 @Override
-                public void changed(ObservableValue<? extends TreeItem<String>> observable, TreeItem<String> oldVal, TreeItem<String> newVal) {
+                public void changed( ObservableValue<? extends TreeItem<String>> observable, TreeItem<String> oldVal, TreeItem<String> newVal) {
                     TreeItem<String> selectedItem = newVal;
                     System.out.println("Selected Text : " + selectedItem.getValue() );
 
-                    TreeItem<String>  treeItem = selectedItem.getParent();
-
-                    while ( treeItem != null ) {
-                        treeItem = treeItem.getParent();
-                    }
+                    selectedPath.clear();
+                    selectedPath = getParents( selectedItem );
+                    System.out.println( selectedPath );
                 }
             });
     }
 
+    /**
+     * getParents - получить массив строк названий каталогов присутствующих в выборе
+     * пользователя относительно дерева каталогов и папок
+     * @param selectedItem - элемент дерева по которому кликнул пользователь
+     * @return ArrayList<String>
+     */
     private ArrayList<String> getParents ( TreeItem<String> selectedItem ) {
-        ArrayList<String> arr = new ArrayList<>();
 
-        return arr;
+        if ( selectedItem.getParent() != null ) {
+            selectedPath.add( selectedItem.getParent().getValue() );
+            this.getParents( selectedItem.getParent() );
+        }
+        return selectedPath;
     }
 }

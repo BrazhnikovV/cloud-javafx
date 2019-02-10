@@ -50,7 +50,7 @@ public class TreeItemDir {
      */
     private static TreeItem<String> getNodesForDirectory( File directory ) {
 
-        TreeItem<String> root = new TreeItem<String>( directory.getName() );
+        TreeItem<String> root = new TreeItem<String>( directory.getName() + "/" );
         for( File f : directory.listFiles() ) {
 
             if( f.isDirectory() ) {
