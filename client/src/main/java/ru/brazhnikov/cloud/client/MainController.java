@@ -145,7 +145,10 @@ public class MainController implements Initializable {
         System.out.println( "CLIENT MainController => deleteAllFiles" );
 
         // !Fixme - отправить командМесадж на сервер для очиски хранилища
-        //FileSystem.deleteAllFiles( this.clientStorageDir );
+        CommandMessage commandMessage = new CommandMessage( "DELETE_ALL" );
+        Network.sendMsg( commandMessage );
+        this.root.getChildren().clear();
+        //this.initTreeItemDir();
     }
 
     /**

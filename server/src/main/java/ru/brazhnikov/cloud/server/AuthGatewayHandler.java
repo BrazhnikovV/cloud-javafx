@@ -44,7 +44,7 @@ public class AuthGatewayHandler extends ChannelInboundHandlerAdapter {
                 if ( user != null ) {
                     if ( user.pass.equals( am.getPassword() ) ) {
 
-                        CommandMessage commandMessage = new CommandMessage();
+                        CommandMessage commandMessage = new CommandMessage( "AUTHORIZATION" );
                         ctx.writeAndFlush( commandMessage ).await();
                         ctx.pipeline().addLast( new MainHandler() );
                         this.authorized = true;

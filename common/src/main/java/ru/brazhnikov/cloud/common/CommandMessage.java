@@ -10,15 +10,15 @@ package ru.brazhnikov.cloud.common;
  */
 public class CommandMessage extends AbstractMessage {
 
-    public static final String CMD_MSG_AUTH_OK = "OK";
+    private String[] commandList = { "CREATE_FOLDER", "DELETE_FILE", "DELETE_DIR", "DELETE_ALL", "AUTHORIZATION" };
 
-    private String type = "NONE AUTOHORIZED";
+    private String command;
 
-    public CommandMessage() {
-
+    public CommandMessage( String command ) {
+        this.command = command;
     }
 
-    public String getType() {
-        return type;
+    public String getCommand() {
+        return command;
     }
 }

@@ -1,10 +1,13 @@
 package ru.brazhnikov.cloud.common;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.List;
 import java.util.Arrays;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
+import org.apache.commons.io.FileUtils;
 
 /**
  * FileSystem - класс для выполнения задач, связанных с файловой системой.
@@ -59,7 +62,7 @@ public class FileSystem {
      * @param pathFile - путь к выбранному файлу
      */
     public void deleteFile ( String pathFile ) {
-
+        // !Fixme удаление
     }
 
     /**
@@ -70,9 +73,33 @@ public class FileSystem {
         List<File> fileList = getFilesFromDirectory( storageDir );
 
         for ( File file : fileList ) {
-            file.delete();
+            if ( file.isDirectory() ) {
+                deleteAllFiles( file.getAbsolutePath() );
+            }
+            else {
+                file.delete();
+            }
         }
+    }
 
-        // !Fixme провка удаления файлов
+    /**
+     * deleteAllDirs - удалить все файлы из целевой директории
+     * @param storageDir - целевая директория
+     */
+    public static void deleteAllDirs ( String storageDir ) {
+        List<File> fileList = getFilesFromDirectory(storageDir);
+
+        for ( File file : fileList ) {
+            if ( file.isDirectory() ) {
+                try {
+                    FileUtils.deleteDirectory( file );
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                file.delete();
+            }
+        }
     }
 }

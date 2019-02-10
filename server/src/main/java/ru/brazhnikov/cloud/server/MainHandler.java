@@ -1,10 +1,12 @@
 package ru.brazhnikov.cloud.server;
 
+import ru.brazhnikov.cloud.common.CommandMessage;
 import ru.brazhnikov.cloud.common.FileMessage;
 import ru.brazhnikov.cloud.common.FileRequest;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
+import ru.brazhnikov.cloud.common.FileSystem;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -36,8 +38,8 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
 
 
             if ( msg instanceof FileRequest ) {
-                /*
                 System.out.println( "### SERVER MainHandler => msg instanceof FileRequest" );
+                /*
                 FileRequest fr = ( FileRequest ) msg;
 
                 if ( Files.exists( Paths.get(this.serverStorageDir + fr.getFilename() ) ) ) {
@@ -45,6 +47,11 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                     ctx.writeAndFlush( fm );
                 }
                 */
+            }
+            else if ( msg instanceof CommandMessage ) {
+                System.out.println( "### SERVER MainHandler => msg instanceof CommandMessage" );
+                FileSystem.deleteAllFiles( this.serverStorageDir );
+                FileSystem.deleteAllDirs( this.serverStorageDir );
             }
             else if ( msg instanceof FileMessage ) {
                 System.out.println( "### SERVER MainHandler => msg instanceof FileMessage" );
