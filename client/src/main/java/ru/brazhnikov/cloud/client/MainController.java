@@ -25,6 +25,7 @@ import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * MainController - контроллер клиента ui
@@ -187,31 +188,41 @@ public class MainController implements Initializable {
 
         // убираем рамку у поля при фокусе
         this.serverTreeView.setStyle( "-fx-focus-traversable: false" );
+        // устанавливаем рутовую директорию хранилища
         this.serverTreeView.setRoot( this.root );
+        // обрабатываем событие клика по дереву файлов а папок
         this.serverTreeView.getSelectionModel().selectedItemProperty()
             .addListener( new ChangeListener<TreeItem<String>>() {
                 @Override
-                public void changed( ObservableValue<? extends TreeItem<String>> observable, TreeItem<String> oldVal, TreeItem<String> newVal) {
+                public void changed( ObservableValue<? extends TreeItem<String>> observable, TreeItem<String> oldVal, TreeItem<String> newVal ) {
                     TreeItem<String> selectedItem = newVal;
-                    System.out.println("Selected Text : " + selectedItem.getValue() );
-
+                    // очищаем текущий массив строк названий директорий
+                    // после каждого клика пользователя и формируем заново
                     selectedPath.clear();
                     selectedPath = getParents( selectedItem );
-                    System.out.println( selectedPath );
                 }
             });
     }
 
     /**
+     * createPath - создать путь к директории из входящего массива
+     * @param selectedPath - массив названий директорий
+     * @return String
+     */
+    private String createPath ( ArrayList<String> selectedPath ) {
+        return selectedPath.stream().collect( Collectors.joining() );
+    }
+
+    /**
      * getParents - получить массив строк названий каталогов присутствующих в выборе
-     * пользователя относительно дерева каталогов и папок
+     * пользователя относительно дерева каталогов и папок ( рекурсивная функция )
      * @param selectedItem - элемент дерева по которому кликнул пользователь
      * @return ArrayList<String>
      */
     private ArrayList<String> getParents ( TreeItem<String> selectedItem ) {
 
         if ( selectedItem.getParent() != null ) {
-            selectedPath.add( selectedItem.getParent().getValue() );
+            selectedPath.add(0, selectedItem.getParent().getValue() );
             this.getParents( selectedItem.getParent() );
         }
         return selectedPath;
