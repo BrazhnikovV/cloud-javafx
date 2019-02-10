@@ -41,12 +41,14 @@ public class AuthGatewayHandler extends ChannelInboundHandlerAdapter {
                 DbHandler dbHandler = DbHandler.getInstance();
                 User user           = dbHandler.getUserByName( am.getLogin() );
 
-                if ( user.pass.equals( am.getPassword() ) ) {
+                if ( user != null ) {
+                    if ( user.pass.equals( am.getPassword() ) ) {
 
-                    CommandMessage commandMessage = new CommandMessage();
-                    ctx.writeAndFlush( commandMessage ).await();
-                    ctx.pipeline().addLast( new MainHandler() );
-                    this.authorized = true;
+                        CommandMessage commandMessage = new CommandMessage();
+                        ctx.writeAndFlush( commandMessage ).await();
+                        ctx.pipeline().addLast( new MainHandler() );
+                        this.authorized = true;
+                    }
                 }
             }
             else {
