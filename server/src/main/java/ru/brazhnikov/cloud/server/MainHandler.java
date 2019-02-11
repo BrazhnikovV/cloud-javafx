@@ -52,6 +52,8 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                 System.out.println( "### SERVER MainHandler => msg instanceof CommandMessage" );
                 FileSystem.deleteAllFiles( this.serverStorageDir );
                 FileSystem.deleteAllDirs( this.serverStorageDir );
+                CommandMessage commandMessage = new CommandMessage( "DELETE_ALL" );
+                ctx.writeAndFlush( commandMessage );
             }
             else if ( msg instanceof FileMessage ) {
                 System.out.println( "### SERVER MainHandler => msg instanceof FileMessage" );

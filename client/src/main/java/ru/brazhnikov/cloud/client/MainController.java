@@ -116,14 +116,27 @@ public class MainController implements Initializable {
         for ( File file : selectedFiles ) {
             this.sendFile( file.getAbsolutePath(), createPath( selectedPath ) );
 
+            if ( this.root.getChildren().size() == 0 ) {
+                this.root.getChildren().add( new TreeItem<String>( file.getName() ) );
+            }
+            else {
+                if ( selectedItem == null ) {
+                    if ( !this.root.getChildren().contains( new TreeItem<String>( file.getName() ) ) ) {
+                        this.root.getChildren().add( new TreeItem<String>( file.getName() ) );
+                    }
+                }
+            }
+
             for ( TreeItem<String > treeItem: this.root.getChildren() ) {
 
-                if ( selectedItem.getValue().equals( treeItem.getValue() ) ) {
-                    treeItem.getChildren().add( new TreeItem<String>( file.getName() ) );
-                }
-                else {
-                    if ( treeItem.getChildren().contains( selectedItem ) ) {
+                if (selectedItem != null) {
+                    if ( selectedItem.getValue().equals( treeItem.getValue() ) ) {
                         treeItem.getChildren().add( new TreeItem<String>( file.getName() ) );
+                    }
+                    else {
+                        if ( treeItem.getChildren().contains( selectedItem ) ) {
+                            treeItem.getChildren().add( new TreeItem<String>( file.getName() ) );
+                        }
                     }
                 }
             }
