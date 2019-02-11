@@ -2,8 +2,6 @@ package ru.brazhnikov.cloud.client;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -143,6 +141,10 @@ public class MainController implements Initializable {
         }
     }
 
+    public void pressCreateDirectory () {
+
+    }
+
     /**
      * exit - перехватить клик по пункту меню выход из приложения
      * @param actionEvent
@@ -157,11 +159,9 @@ public class MainController implements Initializable {
     public void deleteAllFiles () {
         System.out.println( "CLIENT MainController => deleteAllFiles" );
 
-        // !Fixme - отправить командМесадж на сервер для очиски хранилища
         CommandMessage commandMessage = new CommandMessage( "DELETE_ALL" );
         Network.sendMsg( commandMessage );
         this.root.getChildren().clear();
-        //this.initTreeItemDir();
     }
 
     /**

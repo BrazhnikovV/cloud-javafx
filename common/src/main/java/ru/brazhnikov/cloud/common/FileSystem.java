@@ -102,4 +102,12 @@ public class FileSystem {
             }
         }
     }
+
+    /**
+     * createDirectory - создать папку в файловом хранилище
+     * @param dir
+     */
+    public void createDirectory ( String dir ) {
+        new File( dir ).mkdirs();
+    }
 }
